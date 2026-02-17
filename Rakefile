@@ -9,6 +9,7 @@ end
 require 'rubocop/rake_task'
 require 'bundler/gem_tasks'
 require 'rake/testtask'
+require 'yard'
 
 Rake::TestTask.new(:test) do |t|
   t.libs << 'test'
@@ -24,6 +25,11 @@ end
 
 RuboCop::RakeTask.new(:fix) do |t|
   t.options = ['--auto-correct-all']
+end
+
+YARD::Rake::YardocTask.new(:yard) do |t|
+  t.files = ['lib/**/*.rb']
+  t.options = ['--markup', 'markdown']
 end
 
 task :default do

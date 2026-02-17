@@ -240,6 +240,52 @@ rescue ShipEngineRb::Exceptions::ShipEngineError => e
 end
 ```
 
+## Documentation
+
+### YARD API Docs
+
+Generate browsable HTML documentation from the annotated source:
+
+```bash
+bundle exec rake yard
+open doc/index.html
+```
+
+Or start a local documentation server:
+
+```bash
+yard server --reload
+```
+
+### Guides
+
+Detailed guides with code samples and full JSON response examples are available in the [`docs/`](docs/) directory:
+
+| Domain | Guide |
+|--------|-------|
+| [Configuration](docs/configuration.md) | Client setup, per-request overrides, error handling, retries |
+| [Addresses](docs/addresses.md) | Validate and parse shipping addresses |
+| [Carriers](docs/carriers.md) | List carriers, services, packages, options |
+| [Labels](docs/labels.md) | Create, void, list, and manage shipping labels |
+| [Rates](docs/rates.md) | Get rate estimates and shipment rates |
+| [Tracking](docs/tracking.md) | Track packages by label ID or tracking number |
+| [Shipments](docs/shipments.md) | Create, update, cancel, tag shipments |
+| [LTL Freight](docs/ltl.md) | LTL carriers, quotes, pickups, tracking |
+| [Batches](docs/batches.md) | Batch label operations |
+| [Warehouses](docs/warehouses.md) | Warehouse CRUD and settings |
+| [Webhooks](docs/webhooks.md) | Webhook management |
+| [Tags](docs/tags.md) | Tag management |
+| [Account](docs/account.md) | Account settings and images |
+| [Carrier Accounts](docs/carrier_accounts.md) | Connect and configure carrier accounts |
+| [Documents](docs/documents.md) | Combined label documents |
+| [Downloads](docs/downloads.md) | File downloads |
+| [Insurance](docs/insurance.md) | Shipsurance balance and funds |
+| [Manifests](docs/manifests.md) | Carrier manifests |
+| [Package Pickups](docs/package_pickups.md) | Schedule and manage pickups |
+| [Package Types](docs/package_types.md) | Custom package types |
+| [Service Points](docs/service_points.md) | Carrier service point lookup |
+| [Tokens](docs/tokens.md) | Ephemeral token generation |
+
 ## License
 
 MIT

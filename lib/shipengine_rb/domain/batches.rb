@@ -2,14 +2,20 @@
 
 module ShipEngineRb
   module Domain
+    # Batches domain for managing label batches.
+    # Batches allow you to create multiple labels at once and process them together.
     class Batches
       def initialize(internal_client)
         @internal_client = internal_client
       end
 
-      # @param params [Hash] - query params (page, page_size, status, etc.)
-      # @param config [Hash?]
-      # @return [Hash]
+      # Lists all batches, optionally filtered by status and paginated.
+      #
+      # @param params [Hash] query params (page, page_size, status, etc.)
+      # @param config [Hash] optional request configuration (e.g., idempotency_key)
+      # @return [Hash] paginated list of batches with batch_id, status, and shipment counts
+      # @example
+      #   batches = client.batches.list(page: 1, page_size: 25, status: "processing")
       def list(params = {}, config: {})
         response = @internal_client.get('/v1/batches', params, config)
         response.body
@@ -23,60 +29,88 @@ module ShipEngineRb
         response.body
       end
 
-      # @param batch_id [String]
-      # @param config [Hash?]
-      # @return [Hash]
+      # Retrieves a batch by its ShipEngine batch ID.
+      #
+      # @param batch_id [String] the unique identifier of the batch
+      # @param config [Hash] optional request configuration (e.g., idempotency_key)
+      # @return [Hash] batch details including status, shipments, and label URLs
+      # @example
+      #   batch = client.batches.get_by_id("batch_abc123")
       def get_by_id(batch_id, config: {})
         response = @internal_client.get("/v1/batches/#{batch_id}", {}, config)
         response.body
       end
 
-      # @param batch_id [String]
-      # @param config [Hash?]
-      # @return [Hash]
+      # Deletes a batch. Only batches that have not been processed can be deleted.
+      #
+      # @param batch_id [String] the unique identifier of the batch to delete
+      # @param config [Hash] optional request configuration (e.g., idempotency_key)
+      # @return [Hash] empty response or confirmation of deletion
+      # @example
+      #   client.batches.delete("batch_abc123")
       def delete(batch_id, config: {})
         response = @internal_client.delete("/v1/batches/#{batch_id}", {}, config)
         response.body
       end
 
-      # @param external_batch_id [String]
-      # @param config [Hash?]
-      # @return [Hash]
+      # Retrieves a batch by its external batch ID (your system's reference).
+      #
+      # @param external_batch_id [String] your external reference for the batch
+      # @param config [Hash] optional request configuration (e.g., idempotency_key)
+      # @return [Hash] batch details including status, shipments, and label URLs
+      # @example
+      #   batch = client.batches.get_by_external_id("order_batch_001")
       def get_by_external_id(external_batch_id, config: {})
         response = @internal_client.get("/v1/batches/external_batch_id/#{external_batch_id}", {}, config)
         response.body
       end
 
-      # @param batch_id [String]
-      # @param params [Hash] - shipment_ids to add
-      # @param config [Hash?]
-      # @return [Hash]
+      # Adds shipments to an existing batch.
+      #
+      # @param batch_id [String] the unique identifier of the batch
+      # @param params [Hash] shipment_ids array of shipment IDs to add
+      # @param config [Hash] optional request configuration (e.g., idempotency_key)
+      # @return [Hash] updated batch with added shipments
+      # @example
+      #   batch = client.batches.add_shipments("batch_abc123", { shipment_ids: ["se_789"] })
       def add_shipments(batch_id, params, config: {})
         response = @internal_client.post("/v1/batches/#{batch_id}/add", params, config)
         response.body
       end
 
-      # @param batch_id [String]
-      # @param params [Hash] - shipment_ids to remove
-      # @param config [Hash?]
-      # @return [Hash]
+      # Removes shipments from an existing batch.
+      #
+      # @param batch_id [String] the unique identifier of the batch
+      # @param params [Hash] shipment_ids array of shipment IDs to remove
+      # @param config [Hash] optional request configuration (e.g., idempotency_key)
+      # @return [Hash] updated batch with shipments removed
+      # @example
+      #   batch = client.batches.remove_shipments("batch_abc123", { shipment_ids: ["se_789"] })
       def remove_shipments(batch_id, params, config: {})
         response = @internal_client.post("/v1/batches/#{batch_id}/remove", params, config)
         response.body
       end
 
-      # @param batch_id [String]
-      # @param params [Hash] - processing options
-      # @param config [Hash?]
-      # @return [Hash]
+      # Processes a batch to generate labels for all shipments.
+      #
+      # @param batch_id [String] the unique identifier of the batch to process
+      # @param params [Hash] processing options (e.g., label_layout, label_format)
+      # @param config [Hash] optional request configuration (e.g., idempotency_key)
+      # @return [Hash] processing result with label URLs and status
+      # @example
+      #   result = client.batches.process("batch_abc123", { label_format: "pdf" })
       def process(batch_id, params = {}, config: {})
         response = @internal_client.post("/v1/batches/#{batch_id}/process/labels", params, config)
         response.body
       end
 
-      # @param batch_id [String]
-      # @param config [Hash?]
-      # @return [Hash]
+      # Retrieves errors for a batch (e.g., validation or processing failures).
+      #
+      # @param batch_id [String] the unique identifier of the batch
+      # @param config [Hash] optional request configuration (e.g., idempotency_key)
+      # @return [Hash] list of errors with shipment_id, error code, and message
+      # @example
+      #   errors = client.batches.get_errors("batch_abc123")
       def get_errors(batch_id, config: {})
         response = @internal_client.get("/v1/batches/#{batch_id}/errors", {}, config)
         response.body

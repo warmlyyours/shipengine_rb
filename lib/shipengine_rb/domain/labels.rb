@@ -7,10 +7,15 @@ module ShipEngineRb
         @internal_client = internal_client
       end
 
-      # @param rate_id [String]
-      # @param params [Hash]
-      # @param config [Hash?]
-      # @return [Hash]
+      # Creates a shipping label from a previously retrieved rate.
+      #
+      # @param rate_id [String] The rate ID from a rates lookup (e.g. "se-123").
+      # @param params [Hash] Optional label parameters (e.g. label_layout, label_format, label_download_type).
+      # @param config [Hash] Optional request configuration (e.g. idempotency_key).
+      # @return [Hash] Created label with label_id, tracking_number, label_download, and shipment info.
+      # @example
+      #   label = client.labels.create_from_rate("se-123", { label_format: "pdf" })
+      # @see https://shipengine.github.io/shipengine-openapi/
       def create_from_rate(rate_id, params = {}, config: {})
         response = @internal_client.post("/v1/labels/rates/#{rate_id}", params, config)
         response.body
@@ -65,10 +70,15 @@ module ShipEngineRb
         response.body
       end
 
-      # @param shipment_id [String]
-      # @param params [Hash]
-      # @param config [Hash?]
-      # @return [Hash]
+      # Creates a shipping label from an existing shipment.
+      #
+      # @param shipment_id [String] The shipment ID (e.g. "se-123").
+      # @param params [Hash] Optional label parameters (e.g. label_layout, label_format, label_download_type).
+      # @param config [Hash] Optional request configuration (e.g. idempotency_key).
+      # @return [Hash] Created label with label_id, tracking_number, label_download, and shipment info.
+      # @example
+      #   label = client.labels.create_from_shipment_id("se-123", { label_format: "pdf" })
+      # @see https://shipengine.github.io/shipengine-openapi/
       def create_from_shipment_id(shipment_id, params = {}, config: {})
         response = @internal_client.post("/v1/labels/shipment/#{shipment_id}", params, config)
         response.body

@@ -1,0 +1,6 @@
+--markup markdown
+--output-dir doc
+--protected
+--no-private
+--exclude lib/shipengine_rb/utils/base58.rb
+lib/**/*.rb
