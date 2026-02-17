@@ -8,7 +8,7 @@ describe 'Rates Extended Operations' do
     WebMock.reset!
   end
 
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'estimates rates' do
     params = {
@@ -27,7 +27,7 @@ describe 'Rates Extended Operations' do
                shipping_amount: { currency: 'usd', amount: 7.50 } }
            ].to_json)
 
-    response = client.estimate_rates(params)
+    response = client.rates.estimate(params)
     assert_equal 1, response.length
     assert_equal 'usps_priority', response[0]['service_code']
     assert_requested(stub, times: 1)
@@ -37,7 +37,7 @@ describe 'Rates Extended Operations' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/rates/se-rate-1')
            .to_return(status: 200, body: { rate_id: 'se-rate-1', rate_type: 'shipment' }.to_json)
 
-    response = client.get_rate_by_id('se-rate-1')
+    response = client.rates.get_by_id('se-rate-1')
     assert_equal 'se-rate-1', response['rate_id']
     assert_requested(stub, times: 1)
   end
@@ -49,7 +49,7 @@ describe 'Rates Extended Operations' do
            .with(body: params.to_json)
            .to_return(status: 200, body: [].to_json)
 
-    response = client.get_bulk_rates(params)
+    response = client.rates.bulk(params)
     assert_equal [], response
     assert_requested(stub, times: 1)
   end

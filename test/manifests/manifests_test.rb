@@ -8,7 +8,7 @@ describe 'Manifests' do
     WebMock.reset!
   end
 
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'lists manifests' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/manifests')
@@ -17,7 +17,7 @@ describe 'Manifests' do
              total: 1, page: 1, pages: 1
            }.to_json)
 
-    response = client.list_manifests
+    response = client.manifests.list
     assert_equal 1, response['total']
     assert_requested(stub, times: 1)
   end
@@ -29,7 +29,7 @@ describe 'Manifests' do
            .with(body: params.to_json)
            .to_return(status: 200, body: { manifest_id: 'man-2' }.to_json)
 
-    response = client.create_manifest(params)
+    response = client.manifests.create(params)
     assert_equal 'man-2', response['manifest_id']
     assert_requested(stub, times: 1)
   end
@@ -38,7 +38,7 @@ describe 'Manifests' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/manifests/man-1')
            .to_return(status: 200, body: { manifest_id: 'man-1' }.to_json)
 
-    response = client.get_manifest_by_id('man-1')
+    response = client.manifests.get_by_id('man-1')
     assert_equal 'man-1', response['manifest_id']
     assert_requested(stub, times: 1)
   end
@@ -47,7 +47,7 @@ describe 'Manifests' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/manifests/requests/req-1')
            .to_return(status: 200, body: { manifest_request_id: 'req-1', status: 'completed' }.to_json)
 
-    response = client.get_manifest_request_by_id('req-1')
+    response = client.manifests.get_request_by_id('req-1')
     assert_equal 'req-1', response['manifest_request_id']
     assert_equal 'completed', response['status']
     assert_requested(stub, times: 1)

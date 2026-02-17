@@ -8,13 +8,13 @@ describe 'Account' do
     WebMock.reset!
   end
 
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'gets account settings' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/account/settings')
            .to_return(status: 200, body: { account_id: 'acc-123' }.to_json)
 
-    response = client.get_account_settings
+    response = client.account.get_settings
     assert_equal 'acc-123', response['account_id']
     assert_requested(stub, times: 1)
   end
@@ -26,7 +26,7 @@ describe 'Account' do
            .with(body: params.to_json)
            .to_return(status: 200, body: {}.to_json)
 
-    client.update_account_settings(params)
+    client.account.update_settings(params)
     assert_requested(stub, times: 1)
   end
 
@@ -34,7 +34,7 @@ describe 'Account' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/account/settings/images')
            .to_return(status: 200, body: { images: [{ image_id: 'img-1' }] }.to_json)
 
-    response = client.list_account_images
+    response = client.account.list_images
     assert_equal 'img-1', response['images'][0]['image_id']
     assert_requested(stub, times: 1)
   end
@@ -43,7 +43,7 @@ describe 'Account' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/account/settings/images/img-1')
            .to_return(status: 200, body: { image_id: 'img-1', label_image_url: 'https://...' }.to_json)
 
-    response = client.get_account_image('img-1')
+    response = client.account.get_image('img-1')
     assert_equal 'img-1', response['image_id']
     assert_requested(stub, times: 1)
   end
@@ -55,7 +55,7 @@ describe 'Account' do
            .with(body: params.to_json)
            .to_return(status: 200, body: { image_id: 'img-2' }.to_json)
 
-    response = client.create_account_image(params)
+    response = client.account.create_image(params)
     assert_equal 'img-2', response['image_id']
     assert_requested(stub, times: 1)
   end
@@ -67,7 +67,7 @@ describe 'Account' do
            .with(body: params.to_json)
            .to_return(status: 204, body: {}.to_json)
 
-    client.update_account_image('img-1', params)
+    client.account.update_image('img-1', params)
     assert_requested(stub, times: 1)
   end
 
@@ -75,7 +75,7 @@ describe 'Account' do
     stub = stub_request(:delete, 'https://api.shipengine.com/v1/account/settings/images/img-1')
            .to_return(status: 204, body: {}.to_json)
 
-    client.delete_account_image('img-1')
+    client.account.delete_image('img-1')
     assert_requested(stub, times: 1)
   end
 end

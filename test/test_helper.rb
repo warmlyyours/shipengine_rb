@@ -19,7 +19,7 @@ Minitest::Tagz.choose_tags(*ENV['TAGS'].split(',')) if ENV['TAGS']
 
 # local modules
 ENV['USE_SIMENGINE'] = 'true'
-require 'shipengine'
+require 'shipengine_rb'
 require 'test_utility/custom_assertions'
 require 'test_utility/factory'
 require 'test_utility/test_utils'
@@ -27,4 +27,4 @@ require 'test_utility/test_utils'
 # methods / constants that will be available globally
 include CustomAssertions
 include TestUtils
-include ShipEngine::Constants
+include ShipEngineRb::Constants

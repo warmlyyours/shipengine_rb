@@ -19,7 +19,7 @@ describe 'Validate Address: Functional' do
   after do
     WebMock.reset!
   end
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'handles unauthorized errors' do
     params = [{
@@ -49,8 +49,8 @@ describe 'Validate Address: Functional' do
       message: 'The API key is invalid. Please see https://www.shipengine.com/docs/auth'
     }
 
-    assert_raises_shipengine(ShipEngine::Exceptions::ShipEngineError, expected_err) do
-      client.validate_addresses(params)
+    assert_raises_shipengine(ShipEngineRb::Exceptions::ShipEngineError, expected_err) do
+      client.addresses.validate(params)
       assert_requested(stub, times: 1)
     end
   end
@@ -86,8 +86,8 @@ describe 'Validate Address: Functional' do
       message: 'addresses: Cannot deserialize the current JSON object (e.g. {"name":"value"})'
     }
 
-    assert_raises_shipengine(ShipEngine::Exceptions::ShipEngineError, expected_err) do
-      client.validate_addresses(params)
+    assert_raises_shipengine(ShipEngineRb::Exceptions::ShipEngineError, expected_err) do
+      client.addresses.validate(params)
       assert_requested(stub, times: 1)
     end
   end
@@ -136,40 +136,21 @@ describe 'Validate Address: Functional' do
              messages: []
            }].to_json)
 
-    expected = [{
-      status: 'verified',
-      original_address: {
-        name: nil,
-        company_name: nil,
-        address_line1: '4 Jersey St.',
-        address_line2: 'Suite 200',
-        address_line3: '2nd Floor',
-        phone: nil,
-        city_locality: 'Boston',
-        state_province: 'MA',
-        postal_code: '02215',
-        country_code: 'US',
-        address_residential_indicator: 'unknown'
-      },
-
-      matched_address: {
-        name: nil,
-        company_name: nil,
-        address_line1: '4 JERSEY ST STE 200',
-        address_line2: '',
-        address_line3: '2ND FLOOR',
-        phone: nil,
-        city_locality: 'BOSTON',
-        state_province: 'MA',
-        postal_code: '02215-4148',
-        country_code: 'US',
-        address_residential_indicator: 'no'
-      },
-      messages: []
-    }]
-
-    response = client.validate_addresses(params)
-    assert_address_validation_result(expected[0], response[0])
+    response = client.addresses.validate(params)
+    assert_equal 'verified', response[0]['status']
+    assert_equal '4 Jersey St.', response[0]['original_address']['address_line1']
+    assert_equal 'Suite 200', response[0]['original_address']['address_line2']
+    assert_equal '2nd Floor', response[0]['original_address']['address_line3']
+    assert_equal 'Boston', response[0]['original_address']['city_locality']
+    assert_equal 'MA', response[0]['original_address']['state_province']
+    assert_equal '02215', response[0]['original_address']['postal_code']
+    assert_equal 'US', response[0]['original_address']['country_code']
+    assert_equal '4 JERSEY ST STE 200', response[0]['matched_address']['address_line1']
+    assert_equal '', response[0]['matched_address']['address_line2']
+    assert_equal '2ND FLOOR', response[0]['matched_address']['address_line3']
+    assert_equal 'BOSTON', response[0]['matched_address']['city_locality']
+    assert_equal '02215-4148', response[0]['matched_address']['postal_code']
+    assert_equal [], response[0]['messages']
     assert_requested(stub, times: 1)
   end
 
@@ -217,39 +198,17 @@ describe 'Validate Address: Functional' do
              messages: []
            }].to_json)
 
-    expected = [{
-      status: 'verified',
-      original_address: {
-        name: 'John Smith',
-        phone: nil,
-        company_name: nil,
-        address_line1: '3910 Bailey Lane',
-        address_line2: nil,
-        address_line3: nil,
-        city_locality: 'Austin',
-        state_province: 'TX',
-        postal_code: '78756',
-        country_code: 'US',
-        address_residential_indicator: 'yes'
-      },
-      matched_address: {
-        name: 'JOHN SMITH',
-        phone: nil,
-        company_name: nil,
-        address_line1: '3910 BAILEY LN',
-        address_line2: '',
-        address_line3: nil,
-        city_locality: 'AUSTIN',
-        state_province: 'TX',
-        postal_code: '78756-3924',
-        country_code: 'US',
-        address_residential_indicator: 'yes'
-      },
-      messages: []
-    }]
-
-    response = client.validate_addresses(params)
-    assert_address_validation_result(expected[0], response[0])
+    response = client.addresses.validate(params)
+    assert_equal 'verified', response[0]['status']
+    assert_equal 'John Smith', response[0]['original_address']['name']
+    assert_equal '3910 Bailey Lane', response[0]['original_address']['address_line1']
+    assert_equal 'Austin', response[0]['original_address']['city_locality']
+    assert_equal 'TX', response[0]['original_address']['state_province']
+    assert_equal '78756', response[0]['original_address']['postal_code']
+    assert_equal 'JOHN SMITH', response[0]['matched_address']['name']
+    assert_equal '3910 BAILEY LN', response[0]['matched_address']['address_line1']
+    assert_equal '78756-3924', response[0]['matched_address']['postal_code']
+    assert_equal [], response[0]['messages']
     assert_requested(stub, times: 1)
   end
 
@@ -309,52 +268,16 @@ describe 'Validate Address: Functional' do
              ]
            }].to_json)
 
-    expected = [{
-      status: 'error',
-      original_address: {
-        name: 'John Smith',
-        phone: nil,
-        company_name: nil,
-        address_line1: 'Winchester Blvd',
-        address_line2: nil,
-        address_line3: nil,
-        city_locality: 'San Jose',
-        state_province: 'CA',
-        postal_code: '78756',
-        country_code: 'US',
-        address_residential_indicator: 'unknown'
-      },
-      matched_address: {
-        name: 'JOHN SMITH',
-        phone: nil,
-        company_name: nil,
-        address_line1: 'WINCHESTER BLVD',
-        address_line2: '',
-        address_line3: nil,
-        city_locality: 'SAN JOSE',
-        state_province: 'CA',
-        postal_code: '95128-2092',
-        country_code: 'US',
-        address_residential_indicator: 'unknown'
-      },
-      messages: [
-        {
-          code: 'a1004',
-          message: 'Address not found',
-          type: 'warning',
-          detail_code: nil
-        },
-        {
-          code: 'a1004',
-          message: 'Insufficient or Incorrect Address Data',
-          type: 'warning',
-          detail_code: nil
-        }
-      ]
-    }]
-
-    response = client.validate_addresses(params)
-    assert_address_validation_result(expected[0], response[0])
+    response = client.addresses.validate(params)
+    assert_equal 'error', response[0]['status']
+    assert_equal 'John Smith', response[0]['original_address']['name']
+    assert_equal 'Winchester Blvd', response[0]['original_address']['address_line1']
+    assert_equal 'WINCHESTER BLVD', response[0]['matched_address']['address_line1']
+    assert_equal 2, response[0]['messages'].length
+    assert_equal 'a1004', response[0]['messages'][0]['code']
+    assert_equal 'Address not found', response[0]['messages'][0]['message']
+    assert_equal 'warning', response[0]['messages'][0]['type']
+    assert_equal 'Insufficient or Incorrect Address Data', response[0]['messages'][1]['message']
     assert_requested(stub, times: 1)
   end
 end

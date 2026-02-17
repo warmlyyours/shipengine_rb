@@ -8,7 +8,7 @@ describe 'Warehouses' do
     WebMock.reset!
   end
 
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'lists warehouses' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/warehouses')
@@ -16,7 +16,7 @@ describe 'Warehouses' do
              warehouses: [{ warehouse_id: 'wh-123', name: 'Main Warehouse' }]
            }.to_json)
 
-    response = client.list_warehouses
+    response = client.warehouses.list
     assert_equal 1, response['warehouses'].length
     assert_equal 'wh-123', response['warehouses'][0]['warehouse_id']
     assert_requested(stub, times: 1)
@@ -29,7 +29,7 @@ describe 'Warehouses' do
            .with(body: params.to_json)
            .to_return(status: 200, body: { warehouse_id: 'wh-456', name: 'New Warehouse' }.to_json)
 
-    response = client.create_warehouse(params)
+    response = client.warehouses.create(params)
     assert_equal 'wh-456', response['warehouse_id']
     assert_requested(stub, times: 1)
   end
@@ -38,7 +38,7 @@ describe 'Warehouses' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/warehouses/wh-123')
            .to_return(status: 200, body: { warehouse_id: 'wh-123', name: 'Main Warehouse' }.to_json)
 
-    response = client.get_warehouse_by_id('wh-123')
+    response = client.warehouses.get_by_id('wh-123')
     assert_equal 'wh-123', response['warehouse_id']
     assert_requested(stub, times: 1)
   end
@@ -50,7 +50,7 @@ describe 'Warehouses' do
            .with(body: params.to_json)
            .to_return(status: 200, body: {}.to_json)
 
-    client.update_warehouse('wh-123', params)
+    client.warehouses.update('wh-123', params)
     assert_requested(stub, times: 1)
   end
 
@@ -58,7 +58,7 @@ describe 'Warehouses' do
     stub = stub_request(:delete, 'https://api.shipengine.com/v1/warehouses/wh-123')
            .to_return(status: 204, body: {}.to_json)
 
-    client.delete_warehouse('wh-123')
+    client.warehouses.delete('wh-123')
     assert_requested(stub, times: 1)
   end
 
@@ -69,7 +69,7 @@ describe 'Warehouses' do
            .with(body: params.to_json)
            .to_return(status: 204, body: {}.to_json)
 
-    client.update_warehouse_settings('wh-123', params)
+    client.warehouses.update_settings('wh-123', params)
     assert_requested(stub, times: 1)
   end
 end

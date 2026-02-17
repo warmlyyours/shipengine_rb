@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shipengine_sdk (2.0.0)
+    shipengine_rb (0.1.0)
       faraday (~> 2.0)
       faraday-retry (~> 2.0)
 
@@ -239,7 +239,7 @@ DEPENDENCIES
   rubocop
   rubocop-shopify
   ruby-debug-ide
-  shipengine_sdk!
+  shipengine_rb!
   simplecov
   solargraph
   spy

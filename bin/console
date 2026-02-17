@@ -2,18 +2,16 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
-require "shipengine"
+require "shipengine_rb"
 
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
 
-# (If you use this, don't forget to add pry to your Gemfile!)
 require "pry"
-# require "irb"
 
-ENV["USE_SIMENGINE"] = "true"
-@shipengine = ShipEngine::Client.new(::ShipEngine::Constants::API_KEY)
-@list_carriers = @shipengine.list_carriers
+# Set your API key via environment variable:
+#   SHIPENGINE_API_KEY=your_key_here bin/console
+api_key = ENV.fetch("SHIPENGINE_API_KEY", "YOUR_API_KEY_HERE")
+@client = ShipEngineRb::Client.new(api_key)
 
-# IRB.start(__FILE__)
 Pry.start

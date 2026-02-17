@@ -8,13 +8,13 @@ describe 'Carriers Extended Operations' do
     WebMock.reset!
   end
 
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'gets a carrier by ID' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/carriers/se-123')
            .to_return(status: 200, body: { carrier_id: 'se-123', carrier_code: 'stamps_com' }.to_json)
 
-    response = client.get_carrier_by_id('se-123')
+    response = client.carriers.get_by_id('se-123')
     assert_equal 'se-123', response['carrier_id']
     assert_requested(stub, times: 1)
   end
@@ -23,7 +23,7 @@ describe 'Carriers Extended Operations' do
     stub = stub_request(:delete, 'https://api.shipengine.com/v1/carriers/se-123')
            .to_return(status: 204, body: {}.to_json)
 
-    client.disconnect_carrier('se-123')
+    client.carriers.disconnect('se-123')
     assert_requested(stub, times: 1)
   end
 
@@ -34,7 +34,7 @@ describe 'Carriers Extended Operations' do
            .with(body: params.to_json)
            .to_return(status: 200, body: { currency: 'usd', amount: 125.00 }.to_json)
 
-    response = client.add_funds_to_carrier('se-123', params)
+    response = client.carriers.add_funds('se-123', params)
     assert_equal 125.00, response['amount']
     assert_requested(stub, times: 1)
   end
@@ -45,7 +45,7 @@ describe 'Carriers Extended Operations' do
              services: [{ service_code: 'usps_priority', name: 'USPS Priority' }]
            }.to_json)
 
-    response = client.list_carrier_services('se-123')
+    response = client.carriers.list_services('se-123')
     assert_equal 1, response['services'].length
     assert_requested(stub, times: 1)
   end
@@ -56,7 +56,7 @@ describe 'Carriers Extended Operations' do
              packages: [{ package_code: 'flat_rate_box', name: 'Flat Rate Box' }]
            }.to_json)
 
-    response = client.list_carrier_packages('se-123')
+    response = client.carriers.list_packages('se-123')
     assert_equal 1, response['packages'].length
     assert_requested(stub, times: 1)
   end
@@ -67,7 +67,7 @@ describe 'Carriers Extended Operations' do
              options: [{ name: 'contains_alcohol', default_value: 'false' }]
            }.to_json)
 
-    response = client.list_carrier_options('se-123')
+    response = client.carriers.list_options('se-123')
     assert_equal 1, response['options'].length
     assert_requested(stub, times: 1)
   end

@@ -8,7 +8,7 @@ describe 'Shipments' do
     WebMock.reset!
   end
 
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'lists shipments' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/shipments')
@@ -17,7 +17,7 @@ describe 'Shipments' do
              total: 1, page: 1, pages: 1
            }.to_json)
 
-    response = client.list_shipments
+    response = client.shipments.list
     assert_equal 1, response['total']
     assert_equal 'se-12345', response['shipments'][0]['shipment_id']
     assert_requested(stub, times: 1)
@@ -33,7 +33,7 @@ describe 'Shipments' do
              shipments: [{ shipment_id: 'se-99999', shipment_status: 'pending' }]
            }.to_json)
 
-    response = client.create_shipments(params)
+    response = client.shipments.create(params)
     assert_equal false, response['has_errors']
     assert_requested(stub, times: 1)
   end
@@ -42,7 +42,7 @@ describe 'Shipments' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/shipments/se-12345')
            .to_return(status: 200, body: { shipment_id: 'se-12345', shipment_status: 'pending' }.to_json)
 
-    response = client.get_shipment_by_id('se-12345')
+    response = client.shipments.get_by_id('se-12345')
     assert_equal 'se-12345', response['shipment_id']
     assert_requested(stub, times: 1)
   end
@@ -51,7 +51,7 @@ describe 'Shipments' do
     stub = stub_request(:put, 'https://api.shipengine.com/v1/shipments/se-12345')
            .to_return(status: 200, body: { shipment_id: 'se-12345', shipment_status: 'pending' }.to_json)
 
-    response = client.update_shipment('se-12345', { service_code: 'usps_first_class_mail' })
+    response = client.shipments.update('se-12345', { service_code: 'usps_first_class_mail' })
     assert_equal 'se-12345', response['shipment_id']
     assert_requested(stub, times: 1)
   end
@@ -60,7 +60,7 @@ describe 'Shipments' do
     stub = stub_request(:put, 'https://api.shipengine.com/v1/shipments/se-12345/cancel')
            .to_return(status: 200, body: {}.to_json)
 
-    client.cancel_shipment('se-12345')
+    client.shipments.cancel('se-12345')
     assert_requested(stub, times: 1)
   end
 
@@ -68,7 +68,7 @@ describe 'Shipments' do
     stub = stub_request(:post, 'https://api.shipengine.com/v1/shipments/se-12345/tags/priority')
            .to_return(status: 200, body: { shipment_id: 'se-12345', tag_name: 'priority' }.to_json)
 
-    response = client.tag_shipment('se-12345', 'priority')
+    response = client.shipments.add_tag('se-12345', 'priority')
     assert_equal 'priority', response['tag_name']
     assert_requested(stub, times: 1)
   end
@@ -77,7 +77,7 @@ describe 'Shipments' do
     stub = stub_request(:delete, 'https://api.shipengine.com/v1/shipments/se-12345/tags/priority')
            .to_return(status: 200, body: {}.to_json)
 
-    client.untag_shipment('se-12345', 'priority')
+    client.shipments.remove_tag('se-12345', 'priority')
     assert_requested(stub, times: 1)
   end
 
@@ -85,7 +85,7 @@ describe 'Shipments' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/shipments/external_shipment_id/ext-ship-1')
            .to_return(status: 200, body: { shipment_id: 'se-12345', external_shipment_id: 'ext-ship-1' }.to_json)
 
-    response = client.get_shipment_by_external_id('ext-ship-1')
+    response = client.shipments.get_by_external_id('ext-ship-1')
     assert_equal 'se-12345', response['shipment_id']
     assert_equal 'ext-ship-1', response['external_shipment_id']
     assert_requested(stub, times: 1)
@@ -101,7 +101,7 @@ describe 'Shipments' do
              shipment: { ship_to: { name: 'John Smith' } }
            }.to_json)
 
-    response = client.parse_shipment(params)
+    response = client.shipments.parse(params)
     assert_equal 0.9, response['score']
     assert_equal 'John Smith', response.dig('shipment', 'ship_to', 'name')
     assert_requested(stub, times: 1)
@@ -113,7 +113,7 @@ describe 'Shipments' do
              rates: [{ rate_id: 'rate-1', shipping_amount: { amount: 5.99 } }]
            }.to_json)
 
-    response = client.get_shipment_rates('se-12345')
+    response = client.shipments.get_rates('se-12345')
     assert_equal 'rate-1', response['rates'][0]['rate_id']
     assert_requested(stub, times: 1)
   end
@@ -122,7 +122,7 @@ describe 'Shipments' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/shipments/se-12345/tags')
            .to_return(status: 200, body: { tags: [{ name: 'priority' }] }.to_json)
 
-    response = client.list_shipment_tags('se-12345')
+    response = client.shipments.list_tags('se-12345')
     assert_equal 'priority', response['tags'][0]['name']
     assert_requested(stub, times: 1)
   end
@@ -134,7 +134,7 @@ describe 'Shipments' do
            .with(body: params.to_json)
            .to_return(status: 204, body: {}.to_json)
 
-    client.update_shipment_tags(params)
+    client.shipments.update_tags(params)
     assert_requested(stub, times: 1)
   end
 end

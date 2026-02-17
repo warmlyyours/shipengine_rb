@@ -8,7 +8,7 @@ describe 'Documents' do
     WebMock.reset!
   end
 
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'creates a combined label document' do
     params = { label_ids: ['se-label-1', 'se-label-2'] }
@@ -21,7 +21,7 @@ describe 'Documents' do
              pdf_url: 'https://api.shipengine.com/v1/downloads/...'
            }.to_json)
 
-    response = client.create_combined_label_document(params)
+    response = client.documents.create_combined_label_document(params)
     assert_equal 'frm-1', response['form_id']
     assert_equal '4x6', response['label_layout']
     assert_requested(stub, times: 1)

@@ -8,7 +8,7 @@ describe 'Carrier Accounts' do
     WebMock.reset!
   end
 
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'connects a carrier account' do
     params = { nickname: 'My FedEx', account_number: '1234567890' }
@@ -17,7 +17,7 @@ describe 'Carrier Accounts' do
            .with(body: params.to_json)
            .to_return(status: 200, body: { carrier_id: 'se-fedex-1' }.to_json)
 
-    response = client.connect_carrier_account('fedex', params)
+    response = client.carrier_accounts.connect('fedex', params)
     assert_equal 'se-fedex-1', response['carrier_id']
     assert_requested(stub, times: 1)
   end
@@ -26,7 +26,7 @@ describe 'Carrier Accounts' do
     stub = stub_request(:delete, 'https://api.shipengine.com/v1/connections/carriers/fedex/se-fedex-1')
            .to_return(status: 204, body: {}.to_json)
 
-    client.disconnect_carrier_account('fedex', 'se-fedex-1')
+    client.carrier_accounts.disconnect('fedex', 'se-fedex-1')
     assert_requested(stub, times: 1)
   end
 
@@ -34,7 +34,7 @@ describe 'Carrier Accounts' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/connections/carriers/fedex/se-fedex-1/settings')
            .to_return(status: 200, body: { nickname: 'My FedEx', is_primary_account: true }.to_json)
 
-    response = client.get_carrier_account_settings('fedex', 'se-fedex-1')
+    response = client.carrier_accounts.get_settings('fedex', 'se-fedex-1')
     assert_equal 'My FedEx', response['nickname']
     assert_equal true, response['is_primary_account']
     assert_requested(stub, times: 1)
@@ -47,7 +47,7 @@ describe 'Carrier Accounts' do
            .with(body: params.to_json)
            .to_return(status: 204, body: {}.to_json)
 
-    client.update_carrier_account_settings('fedex', 'se-fedex-1', params)
+    client.carrier_accounts.update_settings('fedex', 'se-fedex-1', params)
     assert_requested(stub, times: 1)
   end
 end

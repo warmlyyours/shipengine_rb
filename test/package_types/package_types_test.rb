@@ -8,7 +8,7 @@ describe 'Package Types' do
     WebMock.reset!
   end
 
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'lists package types' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/packages')
@@ -16,7 +16,7 @@ describe 'Package Types' do
              packages: [{ package_id: 'pkg-1', package_code: 'custom_box', name: 'Custom Box' }]
            }.to_json)
 
-    response = client.list_package_types
+    response = client.package_types.list
     assert_equal 1, response['packages'].length
     assert_requested(stub, times: 1)
   end
@@ -28,7 +28,7 @@ describe 'Package Types' do
            .with(body: params.to_json)
            .to_return(status: 200, body: { package_id: 'pkg-2', package_code: 'my_box' }.to_json)
 
-    response = client.create_package_type(params)
+    response = client.package_types.create(params)
     assert_equal 'pkg-2', response['package_id']
     assert_requested(stub, times: 1)
   end
@@ -37,7 +37,7 @@ describe 'Package Types' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/packages/pkg-1')
            .to_return(status: 200, body: { package_id: 'pkg-1', name: 'Custom Box' }.to_json)
 
-    response = client.get_package_type_by_id('pkg-1')
+    response = client.package_types.get_by_id('pkg-1')
     assert_equal 'pkg-1', response['package_id']
     assert_requested(stub, times: 1)
   end
@@ -49,7 +49,7 @@ describe 'Package Types' do
            .with(body: params.to_json)
            .to_return(status: 200, body: {}.to_json)
 
-    client.update_package_type('pkg-1', params)
+    client.package_types.update('pkg-1', params)
     assert_requested(stub, times: 1)
   end
 
@@ -57,7 +57,7 @@ describe 'Package Types' do
     stub = stub_request(:delete, 'https://api.shipengine.com/v1/packages/pkg-1')
            .to_return(status: 204, body: {}.to_json)
 
-    client.delete_package_type('pkg-1')
+    client.package_types.delete('pkg-1')
     assert_requested(stub, times: 1)
   end
 end

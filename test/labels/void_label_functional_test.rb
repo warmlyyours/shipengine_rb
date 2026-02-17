@@ -2,20 +2,11 @@
 
 require 'test_helper'
 
-#
-# <Description>
-#
-# @param expected_arr [Hash]
-def assert_void_label_response(expected, actual_response)
-  assert_equal(expected[:approved], actual_response.approved) if expected.key?(:approved)
-  assert_equal(expected[:message], actual_response.message) if expected.key?(:message)
-end
-
 describe 'Void Label from Label Id: Functional' do
   after do
     WebMock.reset!
   end
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'handles unauthorized errors' do
     stub = stub_request(:put, 'https://api.shipengine.com/v1/labels/se-28529731/void')
@@ -36,8 +27,8 @@ describe 'Void Label from Label Id: Functional' do
       message: 'The API key is invalid. Please see https://www.shipengine.com/docs/auth'
     }
 
-    assert_raises_shipengine(ShipEngine::Exceptions::ShipEngineError, expected_err) do
-      client.void_label_with_label_id('se-28529731')
+    assert_raises_shipengine(ShipEngineRb::Exceptions::ShipEngineError, expected_err) do
+      client.labels.void('se-28529731')
       assert_requested(stub, times: 1)
     end
   end
@@ -49,13 +40,9 @@ describe 'Void Label from Label Id: Functional' do
              message: 'Request for refund submitted.  This label has been voided.'
            }.to_json)
 
-    expected = {
-      approved: true,
-      message: 'Request for refund submitted.  This label has been voided.'
-    }
-
-    actual_response = client.void_label_with_label_id('se-28529731')
-    assert_void_label_response(expected, actual_response)
+    response = client.labels.void('se-28529731')
+    assert_equal true, response['approved']
+    assert_equal 'Request for refund submitted.  This label has been voided.', response['message']
     assert_requested(stub, times: 1)
   end
 end

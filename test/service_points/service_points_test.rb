@@ -8,7 +8,7 @@ describe 'Service Points' do
     WebMock.reset!
   end
 
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'lists service points' do
     params = { address_query: { postal_code: '78756', country_code: 'US' }, providers: [{ carrier_id: 'se-1' }] }
@@ -19,7 +19,7 @@ describe 'Service Points' do
              service_points: [{ service_point_id: 'sp-1', carrier_code: 'ups' }]
            }.to_json)
 
-    response = client.list_service_points(params)
+    response = client.service_points.list(params)
     assert_equal 1, response['service_points'].length
     assert_requested(stub, times: 1)
   end
@@ -28,7 +28,7 @@ describe 'Service Points' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/service_points/ups/US/sp-1')
            .to_return(status: 200, body: { service_point_id: 'sp-1', carrier_code: 'ups' }.to_json)
 
-    response = client.get_service_point_by_id('ups', 'US', 'sp-1')
+    response = client.service_points.get_by_id('ups', 'US', 'sp-1')
     assert_equal 'sp-1', response['service_point_id']
     assert_requested(stub, times: 1)
   end

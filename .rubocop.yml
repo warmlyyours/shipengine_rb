@@ -1,13 +1,13 @@
 AllCops:
   NewCops: enable # https://docs.rubocop.org/rubocop/1.11/versioning.html#pending-cops
   SuggestExtensions: false
-  TargetRubyVersion: 3.2.2
+  TargetRubyVersion: 3.4
   Exclude:
     - bin/**/*
     - tmp/**/*
     - vendor/**/*
     - test/**/*
-    - lib/shipengine/utils/base58.rb
+    - lib/shipengine_rb/utils/base58.rb
     - !ruby/regexp /(foo|bar|baz)\.rb/
 
 Style/Documentation:

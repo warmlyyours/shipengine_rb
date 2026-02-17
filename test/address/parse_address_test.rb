@@ -8,7 +8,7 @@ describe 'Parse Address' do
     WebMock.reset!
   end
 
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'parses an address from text' do
     params = { text: 'I need to ship to 525 S Winchester Blvd, San Jose CA 95128' }
@@ -27,7 +27,7 @@ describe 'Parse Address' do
              entities: []
            }.to_json)
 
-    response = client.parse_address(params)
+    response = client.addresses.parse(params)
     assert_equal '525 S Winchester Blvd', response['address']['address_line1']
     assert_equal 0.97, response['score']
     assert_requested(stub, times: 1)

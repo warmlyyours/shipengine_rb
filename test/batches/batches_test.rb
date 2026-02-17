@@ -8,7 +8,7 @@ describe 'Batches' do
     WebMock.reset!
   end
 
-  client = ShipEngine::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
+  client = ShipEngineRb::Client.new('TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s')
 
   it 'lists batches' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/batches')
@@ -17,7 +17,7 @@ describe 'Batches' do
              total: 1, page: 1, pages: 1
            }.to_json)
 
-    response = client.list_batches
+    response = client.batches.list
     assert_equal 1, response['total']
     assert_equal 'se-batch-1', response['batches'][0]['batch_id']
     assert_requested(stub, times: 1)
@@ -30,7 +30,7 @@ describe 'Batches' do
            .with(body: params.to_json)
            .to_return(status: 200, body: { batch_id: 'se-batch-2', status: 'open' }.to_json)
 
-    response = client.create_batch(params)
+    response = client.batches.create(params)
     assert_equal 'se-batch-2', response['batch_id']
     assert_requested(stub, times: 1)
   end
@@ -39,7 +39,7 @@ describe 'Batches' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/batches/se-batch-1')
            .to_return(status: 200, body: { batch_id: 'se-batch-1', status: 'open' }.to_json)
 
-    response = client.get_batch_by_id('se-batch-1')
+    response = client.batches.get_by_id('se-batch-1')
     assert_equal 'se-batch-1', response['batch_id']
     assert_requested(stub, times: 1)
   end
@@ -48,7 +48,7 @@ describe 'Batches' do
     stub = stub_request(:delete, 'https://api.shipengine.com/v1/batches/se-batch-1')
            .to_return(status: 204, body: {}.to_json)
 
-    client.delete_batch('se-batch-1')
+    client.batches.delete('se-batch-1')
     assert_requested(stub, times: 1)
   end
 
@@ -56,7 +56,7 @@ describe 'Batches' do
     stub = stub_request(:post, 'https://api.shipengine.com/v1/batches/se-batch-1/process/labels')
            .to_return(status: 204, body: {}.to_json)
 
-    client.process_batch('se-batch-1')
+    client.batches.process('se-batch-1')
     assert_requested(stub, times: 1)
   end
 
@@ -64,7 +64,7 @@ describe 'Batches' do
     stub = stub_request(:get, 'https://api.shipengine.com/v1/batches/external_batch_id/ext-batch-1')
            .to_return(status: 200, body: { batch_id: 'se-batch-1', external_batch_id: 'ext-batch-1' }.to_json)
 
-    response = client.get_batch_by_external_id('ext-batch-1')
+    response = client.batches.get_by_external_id('ext-batch-1')
     assert_equal 'se-batch-1', response['batch_id']
     assert_equal 'ext-batch-1', response['external_batch_id']
     assert_requested(stub, times: 1)
@@ -77,7 +77,7 @@ describe 'Batches' do
            .with(body: params.to_json)
            .to_return(status: 204, body: {}.to_json)
 
-    client.add_shipments_to_batch('se-batch-1', params)
+    client.batches.add_shipments('se-batch-1', params)
     assert_requested(stub, times: 1)
   end
 
@@ -88,7 +88,7 @@ describe 'Batches' do
            .with(body: params.to_json)
            .to_return(status: 204, body: {}.to_json)
 
-    client.remove_shipments_from_batch('se-batch-1', params)
+    client.batches.remove_shipments('se-batch-1', params)
     assert_requested(stub, times: 1)
   end
 
@@ -98,7 +98,7 @@ describe 'Batches' do
              errors: [{ error: 'Invalid address' }]
            }.to_json)
 
-    response = client.get_batch_errors('se-batch-1')
+    response = client.batches.get_errors('se-batch-1')
     assert_equal 1, response['errors'].length
     assert_requested(stub, times: 1)
   end
