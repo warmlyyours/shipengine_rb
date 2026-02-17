@@ -24,7 +24,7 @@ RuboCop::RakeTask.new(:lint) do |t|
 end
 
 RuboCop::RakeTask.new(:fix) do |t|
-  t.options = ['--auto-correct-all']
+  t.options = ['--autocorrect-all']
 end
 
 YARD::Rake::YardocTask.new(:yard) do |t|

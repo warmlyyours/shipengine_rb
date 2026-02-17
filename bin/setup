@@ -3,6 +3,10 @@ set -euo pipefail
 IFS=$'\n\t'
 set -vx
 
-# Do any other automated setup that you need to do here
 bundle install
-overcommit --install
+
+if command -v overcommit &> /dev/null; then
+  overcommit --install
+else
+  echo "Skipping overcommit (not installed). Run: gem install overcommit"
+fi

@@ -18,22 +18,20 @@ jobs:
         uses: google-github-actions/release-please-action@v3
         with:
           release-type: ruby
-          package-name: shipengine_sdk
+          package-name: shipengine_rb
           bump-minor-pre-major: true
-          version-file: lib/shipengine/version.rb
+          version-file: lib/shipengine_rb/version.rb
 
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
         if: ${{ steps.release.outputs.release_created }}
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
-        if: ${{ steps.release.outputs.release_created }}
-
-      - name: Install project dependencies
-        run: bundle install
+        with:
+          bundler-cache: true
         if: ${{ steps.release.outputs.release_created }}
 
       - name: Publish ShipEngine Gem

@@ -10,7 +10,7 @@ module ShipEngineRb
     class ShipEngineError < StandardError
       attr_reader :request_id, :source, :type, :code, :url
 
-      def initialize(message:, source:, type:, code:, request_id:, url: nil) # rubocop:todo Metrics/ParameterLists
+      def initialize(message:, source:, type:, code:, request_id:, url: nil)
         code = Exceptions::ErrorCode.get_by_str(code) if code.is_a?(String)
         super(message)
         @request_id = request_id
@@ -99,27 +99,27 @@ module ShipEngineRb
       end
     end
 
-    def self.create_error_instance(type:, message:, code:, request_id: nil, source: nil, config: nil) # rubocop:todo Metrics/ParameterLists
+    def self.create_error_instance(type:, message:, code:, request_id: nil, source: nil, config: nil)
       case type
-      when Exceptions::ErrorType.get(:BUSINESS_RULES)
+      when ErrorType.get(:BUSINESS_RULES)
         BusinessRulesError.new(message:, code:, request_id:, source:)
-      when Exceptions::ErrorType.get(:VALIDATION)
+      when ErrorType.get(:VALIDATION)
         ValidationError.new(message:, code:, request_id:, source:)
-      when Exceptions::ErrorType.get(:ACCOUNT_STATUS)
+      when ErrorType.get(:ACCOUNT_STATUS)
         AccountStatusError.new(message:, code:, request_id:, source:)
-      when Exceptions::ErrorType.get(:SECURITY)
+      when ErrorType.get(:SECURITY)
         SecurityError.new(message:, code:, request_id:, source:)
-      when Exceptions::ErrorType.get(:SYSTEM)
+      when ErrorType.get(:SYSTEM)
         case code
         when ErrorCode.get(:RATE_LIMIT_EXCEEDED)
-          RateLimitError.new(message:, request_id:, source:, retries: config.retries)
+          RateLimitError.new(message:, request_id:, source:, retries: config&.retries)
         when ErrorCode.get(:TIMEOUT)
           TimeoutError.new(message:, request_id:, source:)
         else
           SystemError.new(message:, code:, request_id:, source:)
         end
       else
-        ShipEngineError.new(message:, code:, request_id:, source:)
+        ShipEngineError.new(message:, source: source || DEFAULT_SOURCE, type: type, code:, request_id:)
       end
     end
   end

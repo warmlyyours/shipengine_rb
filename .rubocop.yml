@@ -1,5 +1,5 @@
 AllCops:
-  NewCops: enable # https://docs.rubocop.org/rubocop/1.11/versioning.html#pending-cops
+  NewCops: enable
   SuggestExtensions: false
   TargetRubyVersion: 3.4
   Exclude:
@@ -8,6 +8,7 @@ AllCops:
     - vendor/**/*
     - test/**/*
     - lib/shipengine_rb/utils/base58.rb
+    - .pryrc
     - !ruby/regexp /(foo|bar|baz)\.rb/
 
 Style/Documentation:
@@ -16,24 +17,28 @@ Style/Documentation:
 Style/Lambda:
   Enabled: false
 
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always
+
+Layout/LineLength:
+  Max: 150
+  AllowedPatterns: ["^ *# ", "https?://"]
+
 Metrics/AbcSize:
   Enabled: false
 
 Metrics/MethodLength:
   Enabled: false
 
-Layout/LineLength:
-  Max: 300
-  IgnoredPatterns: ["^ *# "]
-
 Metrics/BlockLength:
-  Enabled: false
-
-Layout/MultilineOperationIndentation:
   Enabled: false
 
 Metrics/CyclomaticComplexity:
   Enabled: false
 
 Metrics/PerceivedComplexity:
+  Enabled: false
+
+Metrics/ParameterLists:
   Enabled: false

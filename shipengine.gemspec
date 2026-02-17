@@ -13,11 +13,18 @@ Gem::Specification.new do |spec|
                        'Built on Faraday 2.x with automatic retries and rate-limit handling.'
   spec.homepage      = 'https://github.com/warmlyyours/shipengine_rb'
   spec.license       = 'MIT'
-  spec.files = Dir['*.{md,txt}', '{lib}/**/*']
+  spec.files = Dir['LICENSE', '*.{md,txt}', '{lib}/**/*']
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.4'
 
   spec.add_dependency('faraday', '~> 2.0')
   spec.add_dependency('faraday-retry', '~> 2.0')
-  spec.metadata['rubygems_mfa_required'] = 'true'
+
+  spec.metadata = {
+    'rubygems_mfa_required' => 'true',
+    'source_code_uri' => 'https://github.com/warmlyyours/shipengine_rb',
+    'changelog_uri' => 'https://github.com/warmlyyours/shipengine_rb/blob/main/CHANGELOG.md',
+    'bug_tracker_uri' => 'https://github.com/warmlyyours/shipengine_rb/issues',
+    'documentation_uri' => 'https://github.com/warmlyyours/shipengine_rb/tree/main/docs'
+  }
 end

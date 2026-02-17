@@ -1,5 +1,13 @@
 # frozen_string_literal: true
 
+require 'simplecov'
+SimpleCov.start do
+  add_filter '/test/'
+  add_filter '/vendor/'
+  enable_coverage :branch
+  minimum_coverage 70
+end
+
 # test-related external dependencies and config
 require 'minitest/autorun'
 require 'minitest/reporters'
@@ -10,7 +18,7 @@ require 'minitest/fail_fast'
 require 'webmock/minitest'
 require 'spy'
 require 'minitest/tagz'
-WebMock.enable_net_connect!
+WebMock.disable_net_connect!
 Minitest::Reporters.use!([Minitest::Reporters::ProgressReporter.new])
 
 # bundle exec rake test TAGS=fast
@@ -18,7 +26,6 @@ Minitest::Reporters.use!([Minitest::Reporters::ProgressReporter.new])
 Minitest::Tagz.choose_tags(*ENV['TAGS'].split(',')) if ENV['TAGS']
 
 # local modules
-ENV['USE_SIMENGINE'] = 'true'
 require 'shipengine_rb'
 require 'test_utility/custom_assertions'
 require 'test_utility/factory'

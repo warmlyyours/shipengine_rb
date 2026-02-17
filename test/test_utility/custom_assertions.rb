@@ -27,7 +27,7 @@ module CustomAssertions
 
   def assert_equal_fields(some_hash, some_class)
     some_hash.each_key do |symbol|
-      assert_equal(some_hash[symbol], some_class.send(symbol), "-> #{symbol}") if expected_event.key?(symbol)
+      assert_equal(some_hash[symbol], some_class.send(symbol), "-> #{symbol}") if some_hash.key?(symbol)
     end
   end
 
