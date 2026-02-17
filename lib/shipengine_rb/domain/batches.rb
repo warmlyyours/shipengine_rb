@@ -5,6 +5,8 @@ module ShipEngineRb
     # Batches domain for managing label batches.
     # Batches allow you to create multiple labels at once and process them together.
     class Batches
+      include ShipEngineRb::Pagination
+
       def initialize(internal_client)
         @internal_client = internal_client
       end
@@ -17,16 +19,22 @@ module ShipEngineRb
       # @example
       #   batches = client.batches.list(page: 1, page_size: 25, status: "processing")
       def list(params = {}, config: {})
-        response = @internal_client.get('/v1/batches', params, config)
-        response.body
+        @internal_client.get('/v1/batches', params, config)
+      end
+
+      def list_all(params = {}, config: {})
+        paginate_all(:list, :batches, params, config:)
+      end
+
+      def list_each(params = {}, config: {}, &)
+        paginate_each(:list, :batches, params, config:, &)
       end
 
       # @param params [Hash] - batch details (shipment_ids, rate_ids, etc.)
       # @param config [Hash?]
       # @return [Hash]
       def create(params, config: {})
-        response = @internal_client.post('/v1/batches', params, config)
-        response.body
+        @internal_client.post('/v1/batches', params, config)
       end
 
       # Retrieves a batch by its ShipEngine batch ID.
@@ -37,8 +45,7 @@ module ShipEngineRb
       # @example
       #   batch = client.batches.get_by_id("batch_abc123")
       def get_by_id(batch_id, config: {})
-        response = @internal_client.get("/v1/batches/#{batch_id}", {}, config)
-        response.body
+        @internal_client.get("/v1/batches/#{batch_id}", {}, config)
       end
 
       # Deletes a batch. Only batches that have not been processed can be deleted.
@@ -49,8 +56,7 @@ module ShipEngineRb
       # @example
       #   client.batches.delete("batch_abc123")
       def delete(batch_id, config: {})
-        response = @internal_client.delete("/v1/batches/#{batch_id}", {}, config)
-        response.body
+        @internal_client.delete("/v1/batches/#{batch_id}", {}, config)
       end
 
       # Retrieves a batch by its external batch ID (your system's reference).
@@ -61,8 +67,7 @@ module ShipEngineRb
       # @example
       #   batch = client.batches.get_by_external_id("order_batch_001")
       def get_by_external_id(external_batch_id, config: {})
-        response = @internal_client.get("/v1/batches/external_batch_id/#{external_batch_id}", {}, config)
-        response.body
+        @internal_client.get("/v1/batches/external_batch_id/#{external_batch_id}", {}, config)
       end
 
       # Adds shipments to an existing batch.
@@ -74,8 +79,7 @@ module ShipEngineRb
       # @example
       #   batch = client.batches.add_shipments("batch_abc123", { shipment_ids: ["se_789"] })
       def add_shipments(batch_id, params, config: {})
-        response = @internal_client.post("/v1/batches/#{batch_id}/add", params, config)
-        response.body
+        @internal_client.post("/v1/batches/#{batch_id}/add", params, config)
       end
 
       # Removes shipments from an existing batch.
@@ -87,8 +91,7 @@ module ShipEngineRb
       # @example
       #   batch = client.batches.remove_shipments("batch_abc123", { shipment_ids: ["se_789"] })
       def remove_shipments(batch_id, params, config: {})
-        response = @internal_client.post("/v1/batches/#{batch_id}/remove", params, config)
-        response.body
+        @internal_client.post("/v1/batches/#{batch_id}/remove", params, config)
       end
 
       # Processes a batch to generate labels for all shipments.
@@ -100,8 +103,7 @@ module ShipEngineRb
       # @example
       #   result = client.batches.process("batch_abc123", { label_format: "pdf" })
       def process(batch_id, params = {}, config: {})
-        response = @internal_client.post("/v1/batches/#{batch_id}/process/labels", params, config)
-        response.body
+        @internal_client.post("/v1/batches/#{batch_id}/process/labels", params, config)
       end
 
       # Retrieves errors for a batch (e.g., validation or processing failures).
@@ -112,8 +114,7 @@ module ShipEngineRb
       # @example
       #   errors = client.batches.get_errors("batch_abc123")
       def get_errors(batch_id, config: {})
-        response = @internal_client.get("/v1/batches/#{batch_id}/errors", {}, config)
-        response.body
+        @internal_client.get("/v1/batches/#{batch_id}/errors", {}, config)
       end
     end
   end

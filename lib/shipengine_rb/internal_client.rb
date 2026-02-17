@@ -2,6 +2,7 @@
 
 require 'faraday'
 require 'faraday/retry'
+require 'faraday/http'
 require 'json'
 require 'shipengine_rb/middleware/raise_http_exception'
 require 'shipengine_rb/utils/request_id'
@@ -14,51 +15,50 @@ module ShipEngineRb
     # @param [::ShipEngineRb::Configuration] configuration
     def initialize(configuration)
       @configuration = configuration
+      @connection = build_connection(configuration)
     end
 
-    def get(path, options = {}, config = {})
-      request(:get, path, options, config)
+    def get(path, params = {}, config = {})
+      request(:get, path, params, config)
     end
 
-    def post(path, options = {}, config = {})
-      request(:post, path, options, config)
+    def post(path, params = {}, config = {})
+      request(:post, path, params, config)
     end
 
-    def put(path, options = {}, config = {})
-      request(:put, path, options, config)
+    def put(path, params = {}, config = {})
+      request(:put, path, params, config)
     end
 
-    def delete(path, options = {}, config = {})
-      request(:delete, path, options, config)
+    def delete(path, params = {}, config = {})
+      request(:delete, path, params, config)
     end
 
-    def patch(path, options = {}, config = {})
-      request(:patch, path, options, config)
+    def patch(path, params = {}, config = {})
+      request(:patch, path, params, config)
     end
 
     private
 
     IDEMPOTENT_METHODS = %i[delete get head options put].freeze
-    private_constant :IDEMPOTENT_METHODS
+    REQUEST_KEYS = %i[idempotency_key].freeze
+    private_constant :IDEMPOTENT_METHODS, :REQUEST_KEYS
 
-    def create_connection(config)
-      retries = config.retries
-      base_url = config.base_url
-      api_key = config.api_key
-      timeout = config.timeout
-
-      Faraday.new(url: base_url) do |conn|
+    def build_connection(config)
+      Faraday.new(url: config.base_url) do |conn|
         conn.headers = {
-          'API-Key' => api_key,
+          'API-Key' => config.api_key,
           'Content-Type' => 'application/json',
           'Accept' => 'application/json',
           'User-Agent' => Utils::UserAgent.new.to_s
         }
 
-        conn.options.timeout = timeout / 1000
+        conn.options.timeout = config.timeout / 1000
+        conn.options.open_timeout = config.open_timeout / 1000
+
         conn.request(:json)
         conn.request(:retry, {
-                       max: retries,
+                       max: config.retries,
                        retry_statuses: [429],
                        methods: IDEMPOTENT_METHODS + [:post],
                        exceptions: [ShipEngineRb::Exceptions::RateLimitError],
@@ -68,22 +68,36 @@ module ShipEngineRb
                      })
 
         conn.use(ShipEngineRb::Middleware::RaiseHttpException)
-        conn.response(:json, content_type: //)
+        conn.response(:json, content_type: //, parser_options: { symbolize_names: true })
+        conn.response(:logger, config.logger, headers: false, bodies: false) if config.logger
+
+        conn.adapter :http
       end
     end
 
-    def request(method, path, options, config)
-      config_with_overrides = @configuration.merge(config)
+    def request(method, path, params, config)
+      idempotency_key = config[:idempotency_key] if config.is_a?(Hash)
+      config_overrides = config.is_a?(Hash) ? config.except(*REQUEST_KEYS) : config
 
-      create_connection(config_with_overrides).send(method) do |request|
+      conn = if config_overrides.nil? || config_overrides.empty?
+               @connection
+             else
+               build_connection(@configuration.merge(config_overrides))
+             end
+
+      response = conn.send(method) do |req|
+        req.headers['Idempotency-Key'] = idempotency_key if idempotency_key
+
         case method
         when :get, :delete
-          request.url(path, options)
+          req.url(path, params)
         when :post, :put, :patch
-          request.path = path
-          request.body = options unless options.empty?
+          req.path = path
+          req.body = params unless params.empty?
         end
       end
+
+      response.body
     end
   end
 end

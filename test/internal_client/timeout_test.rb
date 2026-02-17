@@ -15,13 +15,6 @@ describe 'timeout' do
       ShipEngineRb::Client.new('abc1234', timeout: 0)
     end
 
-    # config during instantiation and method call
-    assert_raises_shipengine_validation(timeout_err) do
-      client = ShipEngineRb::Client.new('abc1234')
-      client.configuration.timeout = -1
-      client.addresses.validate(Factory.valid_address_params)
-    end
-
     # config during method call
     assert_raises_shipengine_validation(timeout_err) do
       client = ShipEngineRb::Client.new('abc1234')

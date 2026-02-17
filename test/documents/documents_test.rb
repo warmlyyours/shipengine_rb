@@ -22,8 +22,8 @@ describe 'Documents' do
            }.to_json)
 
     response = client.documents.create_combined_label_document(params)
-    assert_equal 'frm-1', response['form_id']
-    assert_equal '4x6', response['label_layout']
+    assert_equal 'frm-1', response[:form_id]
+    assert_equal '4x6', response[:label_layout]
     assert_requested(stub, times: 1)
   end
 end

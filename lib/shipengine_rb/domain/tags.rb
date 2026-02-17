@@ -17,8 +17,7 @@ module ShipEngineRb
       # @example
       #   client.tags.list
       def list(config: {})
-        response = @internal_client.get('/v1/tags', {}, config)
-        response.body
+        @internal_client.get('/v1/tags', {}, config)
       end
 
       # Creates a new tag.
@@ -30,8 +29,7 @@ module ShipEngineRb
       # @example
       #   client.tags.create("priority")
       def create(tag_name, config: {})
-        response = @internal_client.post("/v1/tags/#{tag_name}", {}, config)
-        response.body
+        @internal_client.post("/v1/tags/#{tag_name}", {}, config)
       end
 
       # Deletes a tag.
@@ -43,8 +41,7 @@ module ShipEngineRb
       # @example
       #   client.tags.delete("priority")
       def delete(tag_name, config: {})
-        response = @internal_client.delete("/v1/tags/#{tag_name}", {}, config)
-        response.body
+        @internal_client.delete("/v1/tags/#{tag_name}", {}, config)
       end
 
       # @param tag_name [String]
@@ -52,8 +49,7 @@ module ShipEngineRb
       # @param config [Hash?]
       # @return [Hash]
       def rename(tag_name, new_tag_name, config: {})
-        response = @internal_client.put("/v1/tags/#{tag_name}/#{new_tag_name}", {}, config)
-        response.body
+        @internal_client.put("/v1/tags/#{tag_name}/#{new_tag_name}", {}, config)
       end
     end
   end

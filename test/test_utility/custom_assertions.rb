@@ -32,15 +32,15 @@ module CustomAssertions
   end
 
   # @param expected [Hash]
-  # @param actual [Hash] - raw hash response with 'package' key
+  # @param actual [Hash] - raw hash response with :package key
   def assert_track_package_result(expected, actual)
-    raise 'no package' unless actual['package']
+    raise 'no package' unless actual[:package]
 
-    assert_equal_value('package_id', expected[:package_id], actual['package']['package_id']) if expected[:package_id]
+    assert_equal_value('package_id', expected[:package_id], actual[:package][:package_id]) if expected[:package_id]
   end
 
   def assert_jsonrpc_method_in_body(method, body)
-    assert_equal(body['method'], method)
+    assert_equal(body[:method], method)
   end
 
   def assert_response_error(expected_err, response_err)
@@ -96,37 +96,37 @@ module CustomAssertions
   def assert_validated_address(expected_address, response_address)
     raise 'address_line1 is a required key.' unless expected_address[:address_line1]
 
-    assert_equal(expected_address[:address_line1], response_address['address_line1'], '-> address_line1') if expected_address.key?(:address_line1)
-    assert_equal(expected_address[:address_line2], response_address['address_line2'], '-> address_line2') if expected_address.key?(:address_line2) && expected_address[:address_line2]
-    assert_equal(expected_address[:address_line3], response_address['address_line3'], '-> address_line3') if expected_address.key?(:address_line3) && expected_address[:address_line3]
-    assert_equal(expected_address[:name], response_address['name'], '-> name') if expected_address.key?(:name) && expected_address[:name]
-    assert_equal(expected_address[:company_name], response_address['company_name'], '-> company_name') if expected_address.key?(:company_name) && expected_address[:company_name]
-    assert_equal(expected_address[:phone], response_address['phone'], '-> phone') if expected_address.key?(:phone) && expected_address[:phone]
-    assert_equal(expected_address[:city_locality], response_address['city_locality'], '-> city_locality') if expected_address.key?(:city_locality) && expected_address[:city_locality]
-    assert_equal(expected_address[:state_province], response_address['state_province'], '-> state_province') if expected_address.key?(:state_province) && expected_address[:state_province]
-    assert_equal(expected_address[:postal_code], response_address['postal_code'], '-> postal_code') if expected_address.key?(:postal_code) && expected_address[:postal_code]
-    assert_equal(expected_address[:country_code], response_address['country_code'], '-> country_code') if expected_address.key?(:country_code) && expected_address[:country_code]
+    assert_equal(expected_address[:address_line1], response_address[:address_line1], '-> address_line1') if expected_address.key?(:address_line1)
+    assert_equal(expected_address[:address_line2], response_address[:address_line2], '-> address_line2') if expected_address.key?(:address_line2) && expected_address[:address_line2]
+    assert_equal(expected_address[:address_line3], response_address[:address_line3], '-> address_line3') if expected_address.key?(:address_line3) && expected_address[:address_line3]
+    assert_equal(expected_address[:name], response_address[:name], '-> name') if expected_address.key?(:name) && expected_address[:name]
+    assert_equal(expected_address[:company_name], response_address[:company_name], '-> company_name') if expected_address.key?(:company_name) && expected_address[:company_name]
+    assert_equal(expected_address[:phone], response_address[:phone], '-> phone') if expected_address.key?(:phone) && expected_address[:phone]
+    assert_equal(expected_address[:city_locality], response_address[:city_locality], '-> city_locality') if expected_address.key?(:city_locality) && expected_address[:city_locality]
+    assert_equal(expected_address[:state_province], response_address[:state_province], '-> state_province') if expected_address.key?(:state_province) && expected_address[:state_province]
+    assert_equal(expected_address[:postal_code], response_address[:postal_code], '-> postal_code') if expected_address.key?(:postal_code) && expected_address[:postal_code]
+    assert_equal(expected_address[:country_code], response_address[:country_code], '-> country_code') if expected_address.key?(:country_code) && expected_address[:country_code]
     return unless expected_address.key?(:address_residential_indicator) && expected_address[:address_residential_indicator]
 
     assert_equal(
       expected_address[:address_residential_indicator],
-      response_address['address_residential_indicator'],
+      response_address[:address_residential_indicator],
       '-> address_residential_indicator'
     )
   end
 
   # @param expected_result [Hash]
-  # @param response_result [Hash] - raw hash response
+  # @param response_result [Hash] - raw hash response (symbol keys)
   def assert_address_validation_result(expected_result, response_result)
-    assert_equal(expected_result[:status], response_result['status']) if expected_result.key?(:status)
-    assert_messages_equals(expected_result[:messages], response_result['messages']) if expected_result.key?(:messages)
+    assert_equal(expected_result[:status], response_result[:status]) if expected_result.key?(:status)
+    assert_messages_equals(expected_result[:messages], response_result[:messages]) if expected_result.key?(:messages)
 
-    return assert_nil(response_result['matched_address'], '~> matched_address') if expected_result.key?(:matched_address) && expected_result[:matched_address].nil?
+    return assert_nil(response_result[:matched_address], '~> matched_address') if expected_result.key?(:matched_address) && expected_result[:matched_address].nil?
 
     expected_address_original = expected_result[:original_address]
     expected_address_matched = expected_result[:matched_address]
-    assert_validated_address(expected_address_original, response_result['original_address'])
-    assert_validated_address(expected_address_matched, response_result['matched_address'])
+    assert_validated_address(expected_address_original, response_result[:original_address])
+    assert_validated_address(expected_address_matched, response_result[:matched_address])
   end
 
   def assert_raises_rate_limit_error(retries: nil, &block)
@@ -144,7 +144,7 @@ module CustomAssertions
   end
 
   # @param expected_messages [Array<Hash>]
-  # @param response_messages [Array<Hash>] - array of raw message hashes
+  # @param response_messages [Array<Hash>] - array of raw message hashes (symbol keys)
   def assert_messages_equals(expected_messages, response_messages)
     assert_equal(
       expected_messages.length,
@@ -153,9 +153,9 @@ module CustomAssertions
     )
     expected_messages.each_with_index do |message, idx|
       r_msg = response_messages[idx]
-      assert_equal(message.fetch(:code), r_msg['code'])
-      assert_equal(message.fetch(:type), r_msg['type'])
-      assert_equal(message.fetch(:message), r_msg['message'])
+      assert_equal(message.fetch(:code), r_msg[:code])
+      assert_equal(message.fetch(:type), r_msg[:type])
+      assert_equal(message.fetch(:message), r_msg[:message])
     end
   end
 
@@ -166,21 +166,21 @@ module CustomAssertions
   end
 
   def assert_tracking_events_in_order(events)
-    previous_date_time = events[0]['datetime']
+    previous_date_time = events[0][:datetime]
     events.each do |event|
-      status = event['status']
+      status = event[:status]
       assert(
-        event['datetime'] >= previous_date_time,
+        event[:datetime] >= previous_date_time,
         "Event #{status} has an earlier timestamp that #{previous_date_time}"
       )
-      previous_date_time = event['datetime']
+      previous_date_time = event[:datetime]
     end
   end
 
   def assert_delivery_date_match(result)
     assert_equal(
-      result['shipment']['actual_delivery_date'],
-      result['events'][-1]['datetime'],
+      result[:shipment][:actual_delivery_date],
+      result[:events][-1][:datetime],
       'The actual_delivery_datetime'
     )
   end

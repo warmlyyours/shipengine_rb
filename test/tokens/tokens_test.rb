@@ -15,7 +15,7 @@ describe 'Tokens' do
            .to_return(status: 200, body: { token: 'ephemeral_token_xyz' }.to_json)
 
     response = client.tokens.get_ephemeral_token
-    assert_equal 'ephemeral_token_xyz', response['token']
+    assert_equal 'ephemeral_token_xyz', response[:token]
     assert_requested(stub, times: 1)
   end
 end

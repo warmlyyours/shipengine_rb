@@ -13,19 +13,17 @@ module ShipEngineRb
   #   client = ShipEngineRb::Client.new(
   #     "YOUR_API_KEY",
   #     retries: 3,
-  #     timeout: 30,
+  #     timeout: 30_000,
+  #     open_timeout: 5_000,
   #     page_size: 50,
-  #     base_url: "https://api.shipengine.com"
+  #     logger: Logger.new($stdout)
   #   )
   #
   #   # Validate addresses
-  #   result = client.addresses.validate([{ name: "John", address_line1: "123 Main St", city: "Austin", state: "TX", postal_code: "78701", country_code: "US" }])
+  #   result = client.addresses.validate([{ name: "John", address_line1: "123 Main St", city_locality: "Austin", state_province: "TX", postal_code: "78701", country_code: "US" }])
   #
-  #   # Get shipping rates
-  #   rates = client.rates.get_with_shipment_details(shipment_details)
-  #
-  #   # Create a label
-  #   label = client.labels.create_from_rate(rate_id)
+  #   # Auto-paginate labels
+  #   client.labels.list_each(label_status: "completed") { |label| puts label[:label_id] }
   #
   # @see https://shipengine.github.io/shipengine-openapi/
   class Client
@@ -37,18 +35,22 @@ module ShipEngineRb
                 :warehouses, :webhooks
 
     # @param api_key [String] Your ShipEngine API key (required for authentication).
-    # @param retries [Integer, nil] Number of retries for failed requests (optional).
-    # @param timeout [Integer, nil] Request timeout in seconds (optional).
-    # @param page_size [Integer, nil] Default page size for paginated endpoints (optional).
+    # @param retries [Integer, nil] Number of retries for failed requests (optional, default 1).
+    # @param timeout [Integer, nil] Total request timeout in milliseconds (optional, default 60000).
+    # @param open_timeout [Integer, nil] TCP connection timeout in milliseconds (optional, default 10000).
+    # @param page_size [Integer, nil] Default page size for paginated endpoints (optional, default 50).
     # @param base_url [String, nil] Base URL for the API (optional, defaults to ShipEngine production).
+    # @param logger [Logger, nil] Optional logger for request/response logging (default nil = off).
     # @return [Client] A configured client instance with access to all domain resources.
-    def initialize(api_key, retries: nil, timeout: nil, page_size: nil, base_url: nil)
+    def initialize(api_key, retries: nil, timeout: nil, open_timeout: nil, page_size: nil, base_url: nil, logger: nil)
       @configuration = Configuration.new(
         api_key:,
         retries:,
         base_url:,
         timeout:,
-        page_size:
+        open_timeout:,
+        page_size:,
+        logger:
       )
 
       ic = InternalClient.new(@configuration)

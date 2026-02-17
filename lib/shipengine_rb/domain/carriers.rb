@@ -25,8 +25,7 @@ module ShipEngineRb
       #   result = client.carriers.list
       # @see https://shipengine.github.io/shipengine-openapi/
       def list(config: {})
-        response = @internal_client.get('/v1/carriers', {}, config)
-        response.body
+        @internal_client.get('/v1/carriers', {}, config)
       end
 
       # Retrieves a single carrier by ID.
@@ -38,16 +37,14 @@ module ShipEngineRb
       #   carrier = client.carriers.get_by_id("se-123")
       # @see https://shipengine.github.io/shipengine-openapi/
       def get_by_id(carrier_id, config: {})
-        response = @internal_client.get("/v1/carriers/#{carrier_id}", {}, config)
-        response.body
+        @internal_client.get("/v1/carriers/#{carrier_id}", {}, config)
       end
 
       # @param carrier_id [String]
       # @param config [Hash?]
       # @return [Hash]
       def disconnect(carrier_id, config: {})
-        response = @internal_client.delete("/v1/carriers/#{carrier_id}", {}, config)
-        response.body
+        @internal_client.delete("/v1/carriers/#{carrier_id}", {}, config)
       end
 
       # @param carrier_id [String]
@@ -55,32 +52,28 @@ module ShipEngineRb
       # @param config [Hash?]
       # @return [Hash]
       def add_funds(carrier_id, amount, config: {})
-        response = @internal_client.put("/v1/carriers/#{carrier_id}/add_funds", amount, config)
-        response.body
+        @internal_client.put("/v1/carriers/#{carrier_id}/add_funds", amount, config)
       end
 
       # @param carrier_id [String]
       # @param config [Hash?]
       # @return [Hash]
       def list_services(carrier_id, config: {})
-        response = @internal_client.get("/v1/carriers/#{carrier_id}/services", {}, config)
-        response.body
+        @internal_client.get("/v1/carriers/#{carrier_id}/services", {}, config)
       end
 
       # @param carrier_id [String]
       # @param config [Hash?]
       # @return [Hash]
       def list_packages(carrier_id, config: {})
-        response = @internal_client.get("/v1/carriers/#{carrier_id}/packages", {}, config)
-        response.body
+        @internal_client.get("/v1/carriers/#{carrier_id}/packages", {}, config)
       end
 
       # @param carrier_id [String]
       # @param config [Hash?]
       # @return [Hash]
       def list_options(carrier_id, config: {})
-        response = @internal_client.get("/v1/carriers/#{carrier_id}/options", {}, config)
-        response.body
+        @internal_client.get("/v1/carriers/#{carrier_id}/options", {}, config)
       end
     end
   end

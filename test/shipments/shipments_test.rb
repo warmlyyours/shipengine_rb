@@ -18,8 +18,8 @@ describe 'Shipments' do
            }.to_json)
 
     response = client.shipments.list
-    assert_equal 1, response['total']
-    assert_equal 'se-12345', response['shipments'][0]['shipment_id']
+    assert_equal 1, response[:total]
+    assert_equal 'se-12345', response[:shipments][0][:shipment_id]
     assert_requested(stub, times: 1)
   end
 
@@ -34,7 +34,7 @@ describe 'Shipments' do
            }.to_json)
 
     response = client.shipments.create(params)
-    assert_equal false, response['has_errors']
+    assert_equal false, response[:has_errors]
     assert_requested(stub, times: 1)
   end
 
@@ -43,7 +43,7 @@ describe 'Shipments' do
            .to_return(status: 200, body: { shipment_id: 'se-12345', shipment_status: 'pending' }.to_json)
 
     response = client.shipments.get_by_id('se-12345')
-    assert_equal 'se-12345', response['shipment_id']
+    assert_equal 'se-12345', response[:shipment_id]
     assert_requested(stub, times: 1)
   end
 
@@ -52,7 +52,7 @@ describe 'Shipments' do
            .to_return(status: 200, body: { shipment_id: 'se-12345', shipment_status: 'pending' }.to_json)
 
     response = client.shipments.update('se-12345', { service_code: 'usps_first_class_mail' })
-    assert_equal 'se-12345', response['shipment_id']
+    assert_equal 'se-12345', response[:shipment_id]
     assert_requested(stub, times: 1)
   end
 
@@ -69,7 +69,7 @@ describe 'Shipments' do
            .to_return(status: 200, body: { shipment_id: 'se-12345', tag_name: 'priority' }.to_json)
 
     response = client.shipments.add_tag('se-12345', 'priority')
-    assert_equal 'priority', response['tag_name']
+    assert_equal 'priority', response[:tag_name]
     assert_requested(stub, times: 1)
   end
 
@@ -86,8 +86,8 @@ describe 'Shipments' do
            .to_return(status: 200, body: { shipment_id: 'se-12345', external_shipment_id: 'ext-ship-1' }.to_json)
 
     response = client.shipments.get_by_external_id('ext-ship-1')
-    assert_equal 'se-12345', response['shipment_id']
-    assert_equal 'ext-ship-1', response['external_shipment_id']
+    assert_equal 'se-12345', response[:shipment_id]
+    assert_equal 'ext-ship-1', response[:external_shipment_id]
     assert_requested(stub, times: 1)
   end
 
@@ -102,8 +102,8 @@ describe 'Shipments' do
            }.to_json)
 
     response = client.shipments.parse(params)
-    assert_equal 0.9, response['score']
-    assert_equal 'John Smith', response.dig('shipment', 'ship_to', 'name')
+    assert_equal 0.9, response[:score]
+    assert_equal 'John Smith', response.dig(:shipment, :ship_to, :name)
     assert_requested(stub, times: 1)
   end
 
@@ -114,7 +114,7 @@ describe 'Shipments' do
            }.to_json)
 
     response = client.shipments.get_rates('se-12345')
-    assert_equal 'rate-1', response['rates'][0]['rate_id']
+    assert_equal 'rate-1', response[:rates][0][:rate_id]
     assert_requested(stub, times: 1)
   end
 
@@ -123,7 +123,7 @@ describe 'Shipments' do
            .to_return(status: 200, body: { tags: [{ name: 'priority' }] }.to_json)
 
     response = client.shipments.list_tags('se-12345')
-    assert_equal 'priority', response['tags'][0]['name']
+    assert_equal 'priority', response[:tags][0][:name]
     assert_requested(stub, times: 1)
   end
 

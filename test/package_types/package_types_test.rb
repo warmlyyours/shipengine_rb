@@ -17,7 +17,7 @@ describe 'Package Types' do
            }.to_json)
 
     response = client.package_types.list
-    assert_equal 1, response['packages'].length
+    assert_equal 1, response[:packages].length
     assert_requested(stub, times: 1)
   end
 
@@ -29,7 +29,7 @@ describe 'Package Types' do
            .to_return(status: 200, body: { package_id: 'pkg-2', package_code: 'my_box' }.to_json)
 
     response = client.package_types.create(params)
-    assert_equal 'pkg-2', response['package_id']
+    assert_equal 'pkg-2', response[:package_id]
     assert_requested(stub, times: 1)
   end
 
@@ -38,7 +38,7 @@ describe 'Package Types' do
            .to_return(status: 200, body: { package_id: 'pkg-1', name: 'Custom Box' }.to_json)
 
     response = client.package_types.get_by_id('pkg-1')
-    assert_equal 'pkg-1', response['package_id']
+    assert_equal 'pkg-1', response[:package_id]
     assert_requested(stub, times: 1)
   end
 

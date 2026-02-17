@@ -18,8 +18,8 @@ describe 'Batches' do
            }.to_json)
 
     response = client.batches.list
-    assert_equal 1, response['total']
-    assert_equal 'se-batch-1', response['batches'][0]['batch_id']
+    assert_equal 1, response[:total]
+    assert_equal 'se-batch-1', response[:batches][0][:batch_id]
     assert_requested(stub, times: 1)
   end
 
@@ -31,7 +31,7 @@ describe 'Batches' do
            .to_return(status: 200, body: { batch_id: 'se-batch-2', status: 'open' }.to_json)
 
     response = client.batches.create(params)
-    assert_equal 'se-batch-2', response['batch_id']
+    assert_equal 'se-batch-2', response[:batch_id]
     assert_requested(stub, times: 1)
   end
 
@@ -40,7 +40,7 @@ describe 'Batches' do
            .to_return(status: 200, body: { batch_id: 'se-batch-1', status: 'open' }.to_json)
 
     response = client.batches.get_by_id('se-batch-1')
-    assert_equal 'se-batch-1', response['batch_id']
+    assert_equal 'se-batch-1', response[:batch_id]
     assert_requested(stub, times: 1)
   end
 
@@ -65,8 +65,8 @@ describe 'Batches' do
            .to_return(status: 200, body: { batch_id: 'se-batch-1', external_batch_id: 'ext-batch-1' }.to_json)
 
     response = client.batches.get_by_external_id('ext-batch-1')
-    assert_equal 'se-batch-1', response['batch_id']
-    assert_equal 'ext-batch-1', response['external_batch_id']
+    assert_equal 'se-batch-1', response[:batch_id]
+    assert_equal 'ext-batch-1', response[:external_batch_id]
     assert_requested(stub, times: 1)
   end
 
@@ -99,7 +99,7 @@ describe 'Batches' do
            }.to_json)
 
     response = client.batches.get_errors('se-batch-1')
-    assert_equal 1, response['errors'].length
+    assert_equal 1, response[:errors].length
     assert_requested(stub, times: 1)
   end
 end

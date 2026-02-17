@@ -15,8 +15,8 @@ describe 'Insurance' do
            .to_return(status: 200, body: { currency: 'usd', amount: 100.50 }.to_json)
 
     response = client.insurance.get_balance
-    assert_equal 'usd', response['currency']
-    assert_equal 100.50, response['amount']
+    assert_equal 'usd', response[:currency]
+    assert_equal 100.50, response[:amount]
     assert_requested(stub, times: 1)
   end
 
@@ -28,7 +28,7 @@ describe 'Insurance' do
            .to_return(status: 200, body: { currency: 'usd', amount: 150.50 }.to_json)
 
     response = client.insurance.add_funds(params)
-    assert_equal 150.50, response['amount']
+    assert_equal 150.50, response[:amount]
     assert_requested(stub, times: 1)
   end
 

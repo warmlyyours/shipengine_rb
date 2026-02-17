@@ -29,8 +29,7 @@ module ShipEngineRb
       # @see https://shipengine.github.io/shipengine-openapi/
       def validate(addresses, config: {})
         addresses_array = addresses.map { |addr| addr.is_a?(Hash) ? addr.compact : addr }
-        response = @internal_client.post('/v1/addresses/validate', addresses_array, config)
-        response.body
+        @internal_client.post('/v1/addresses/validate', addresses_array, config)
       end
 
       # Parses an address from free-form text. Recognizes and extracts address
@@ -43,8 +42,7 @@ module ShipEngineRb
       #   result = client.addresses.parse({ text: "123 Main St, Austin, TX 78701" })
       # @see https://shipengine.github.io/shipengine-openapi/
       def parse(text, config: {})
-        response = @internal_client.put('/v1/addresses/recognize', text, config)
-        response.body
+        @internal_client.put('/v1/addresses/recognize', text, config)
       end
     end
   end

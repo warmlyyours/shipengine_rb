@@ -10,8 +10,7 @@ module ShipEngineRb
       # @param config [Hash?]
       # @return [Hash]
       def get_ephemeral_token(config: {})
-        response = @internal_client.post('/v1/tokens/ephemeral', {}, config)
-        response.body
+        @internal_client.post('/v1/tokens/ephemeral', {}, config)
       end
     end
   end

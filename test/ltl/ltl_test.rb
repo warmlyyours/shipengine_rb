@@ -16,7 +16,7 @@ describe 'LTL Freight' do
              carriers: [{ carrier_id: 'ltl-1', name: 'R+L Carriers' }]
            }.to_json)
     response = client.ltl.list_carriers
-    assert_equal 1, response['carriers'].length
+    assert_equal 1, response[:carriers].length
     assert_requested(stub, times: 1)
   end
 
@@ -26,7 +26,7 @@ describe 'LTL Freight' do
            .with(body: params.to_json)
            .to_return(status: 200, body: { quote_id: 'q-1', total: { amount: 250.00 } }.to_json)
     response = client.ltl.get_quote('ltl-1', params)
-    assert_equal 'q-1', response['quote_id']
+    assert_equal 'q-1', response[:quote_id]
     assert_requested(stub, times: 1)
   end
 
@@ -34,7 +34,7 @@ describe 'LTL Freight' do
     stub = stub_request(:get, 'https://api.shipengine.com/v-beta/ltl/quotes')
            .to_return(status: 200, body: { quotes: [] }.to_json)
     response = client.ltl.list_quotes
-    assert_equal [], response['quotes']
+    assert_equal [], response[:quotes]
     assert_requested(stub, times: 1)
   end
 
@@ -42,7 +42,7 @@ describe 'LTL Freight' do
     stub = stub_request(:get, 'https://api.shipengine.com/v-beta/ltl/quotes/q-1')
            .to_return(status: 200, body: { quote_id: 'q-1' }.to_json)
     response = client.ltl.get_quote_by_id('q-1')
-    assert_equal 'q-1', response['quote_id']
+    assert_equal 'q-1', response[:quote_id]
     assert_requested(stub, times: 1)
   end
 
@@ -52,7 +52,7 @@ describe 'LTL Freight' do
            .with(body: params.to_json)
            .to_return(status: 200, body: { pickup_id: 'p-1' }.to_json)
     response = client.ltl.schedule_pickup(params)
-    assert_equal 'p-1', response['pickup_id']
+    assert_equal 'p-1', response[:pickup_id]
     assert_requested(stub, times: 1)
   end
 
@@ -60,7 +60,7 @@ describe 'LTL Freight' do
     stub = stub_request(:get, 'https://api.shipengine.com/v-beta/ltl/pickups/p-1')
            .to_return(status: 200, body: { pickup_id: 'p-1' }.to_json)
     response = client.ltl.get_pickup('p-1')
-    assert_equal 'p-1', response['pickup_id']
+    assert_equal 'p-1', response[:pickup_id]
     assert_requested(stub, times: 1)
   end
 
@@ -70,7 +70,7 @@ describe 'LTL Freight' do
            .with(body: params.to_json)
            .to_return(status: 200, body: { pickup_id: 'p-1' }.to_json)
     response = client.ltl.update_pickup('p-1', params)
-    assert_equal 'p-1', response['pickup_id']
+    assert_equal 'p-1', response[:pickup_id]
     assert_requested(stub, times: 1)
   end
 
@@ -85,7 +85,7 @@ describe 'LTL Freight' do
     stub = stub_request(:get, 'https://api.shipengine.com/v-beta/ltl/tracking?tracking_number=LTL123')
            .to_return(status: 200, body: { tracking_number: 'LTL123', status: 'in_transit' }.to_json)
     response = client.ltl.track({ tracking_number: 'LTL123' })
-    assert_equal 'LTL123', response['tracking_number']
+    assert_equal 'LTL123', response[:tracking_number]
     assert_requested(stub, times: 1)
   end
 end

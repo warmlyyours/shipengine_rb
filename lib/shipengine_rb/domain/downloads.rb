@@ -17,8 +17,7 @@ module ShipEngineRb
       # @example
       #   file = client.downloads.download("labels/123/4")
       def download(subpath, config: {})
-        response = @internal_client.get("/v1/downloads/#{subpath}", {}, config)
-        response.body
+        @internal_client.get("/v1/downloads/#{subpath}", {}, config)
       end
     end
   end

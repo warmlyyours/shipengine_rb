@@ -17,8 +17,7 @@ module ShipEngineRb
       # @example
       #   client.warehouses.list
       def list(config: {})
-        response = @internal_client.get('/v1/warehouses', {}, config)
-        response.body
+        @internal_client.get('/v1/warehouses', {}, config)
       end
 
       # Creates a new warehouse.
@@ -30,8 +29,7 @@ module ShipEngineRb
       # @example
       #   client.warehouses.create(name: "Main Warehouse", address: {...})
       def create(params, config: {})
-        response = @internal_client.post('/v1/warehouses', params, config)
-        response.body
+        @internal_client.post('/v1/warehouses', params, config)
       end
 
       # Retrieves a warehouse by its ID.
@@ -43,8 +41,7 @@ module ShipEngineRb
       # @example
       #   client.warehouses.get_by_id("se-warehouse-123")
       def get_by_id(warehouse_id, config: {})
-        response = @internal_client.get("/v1/warehouses/#{warehouse_id}", {}, config)
-        response.body
+        @internal_client.get("/v1/warehouses/#{warehouse_id}", {}, config)
       end
 
       # Updates an existing warehouse.
@@ -57,8 +54,7 @@ module ShipEngineRb
       # @example
       #   client.warehouses.update("se-warehouse-123", name: "Updated Warehouse")
       def update(warehouse_id, params, config: {})
-        response = @internal_client.put("/v1/warehouses/#{warehouse_id}", params, config)
-        response.body
+        @internal_client.put("/v1/warehouses/#{warehouse_id}", params, config)
       end
 
       # Deletes a warehouse.
@@ -70,8 +66,7 @@ module ShipEngineRb
       # @example
       #   client.warehouses.delete("se-warehouse-123")
       def delete(warehouse_id, config: {})
-        response = @internal_client.delete("/v1/warehouses/#{warehouse_id}", {}, config)
-        response.body
+        @internal_client.delete("/v1/warehouses/#{warehouse_id}", {}, config)
       end
 
       # Updates settings for a warehouse.
@@ -84,8 +79,7 @@ module ShipEngineRb
       # @example
       #   client.warehouses.update_settings("se-warehouse-123", default_carrier: "ups")
       def update_settings(warehouse_id, params, config: {})
-        response = @internal_client.put("/v1/warehouses/#{warehouse_id}/settings", params, config)
-        response.body
+        @internal_client.put("/v1/warehouses/#{warehouse_id}/settings", params, config)
       end
     end
   end

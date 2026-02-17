@@ -15,7 +15,7 @@ describe 'Carriers Extended Operations' do
            .to_return(status: 200, body: { carrier_id: 'se-123', carrier_code: 'stamps_com' }.to_json)
 
     response = client.carriers.get_by_id('se-123')
-    assert_equal 'se-123', response['carrier_id']
+    assert_equal 'se-123', response[:carrier_id]
     assert_requested(stub, times: 1)
   end
 
@@ -35,7 +35,7 @@ describe 'Carriers Extended Operations' do
            .to_return(status: 200, body: { currency: 'usd', amount: 125.00 }.to_json)
 
     response = client.carriers.add_funds('se-123', params)
-    assert_equal 125.00, response['amount']
+    assert_equal 125.00, response[:amount]
     assert_requested(stub, times: 1)
   end
 
@@ -46,7 +46,7 @@ describe 'Carriers Extended Operations' do
            }.to_json)
 
     response = client.carriers.list_services('se-123')
-    assert_equal 1, response['services'].length
+    assert_equal 1, response[:services].length
     assert_requested(stub, times: 1)
   end
 
@@ -57,7 +57,7 @@ describe 'Carriers Extended Operations' do
            }.to_json)
 
     response = client.carriers.list_packages('se-123')
-    assert_equal 1, response['packages'].length
+    assert_equal 1, response[:packages].length
     assert_requested(stub, times: 1)
   end
 
@@ -68,7 +68,7 @@ describe 'Carriers Extended Operations' do
            }.to_json)
 
     response = client.carriers.list_options('se-123')
-    assert_equal 1, response['options'].length
+    assert_equal 1, response[:options].length
     assert_requested(stub, times: 1)
   end
 end

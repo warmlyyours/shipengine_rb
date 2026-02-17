@@ -32,8 +32,7 @@ module ShipEngineRb
       #   })
       # @see https://shipengine.github.io/shipengine-openapi/
       def get_with_shipment_details(shipment_details, config: {})
-        response = @internal_client.post('/v1/rates', shipment_details, config)
-        response.body
+        @internal_client.post('/v1/rates', shipment_details, config)
       end
 
       # Estimates shipping rates with partial shipment details (e.g. destination only).
@@ -47,8 +46,7 @@ module ShipEngineRb
       #   })
       # @see https://shipengine.github.io/shipengine-openapi/
       def estimate(shipment_details, config: {})
-        response = @internal_client.post('/v1/rates/estimate', shipment_details, config)
-        response.body
+        @internal_client.post('/v1/rates/estimate', shipment_details, config)
       end
 
       # Retrieves a single rate by ID (from a previous rate lookup).
@@ -60,16 +58,14 @@ module ShipEngineRb
       #   rate = client.rates.get_by_id("se-123")
       # @see https://shipengine.github.io/shipengine-openapi/
       def get_by_id(rate_id, config: {})
-        response = @internal_client.get("/v1/rates/#{rate_id}", {}, config)
-        response.body
+        @internal_client.get("/v1/rates/#{rate_id}", {}, config)
       end
 
       # @param params [Hash]
       # @param config [Hash?]
       # @return [Hash]
       def bulk(params, config: {})
-        response = @internal_client.post('/v1/rates/bulk', params, config)
-        response.body
+        @internal_client.post('/v1/rates/bulk', params, config)
       end
     end
   end

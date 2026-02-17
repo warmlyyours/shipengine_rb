@@ -20,8 +20,7 @@ module ShipEngineRb
       # @example
       #   carriers = client.ltl.list_carriers
       def list_carriers(config: {})
-        response = @internal_client.get("#{LTL_BASE}/carriers", {}, config)
-        response.body
+        @internal_client.get("#{LTL_BASE}/carriers", {}, config)
       end
 
       # Request an LTL freight quote from a specific carrier.
@@ -33,8 +32,7 @@ module ShipEngineRb
       # @example
       #   quote = client.ltl.get_quote("se_123", { origin: {...}, destination: {...}, packages: [...] })
       def get_quote(carrier_id, params, config: {})
-        response = @internal_client.post("#{LTL_BASE}/quotes/#{carrier_id}", params, config)
-        response.body
+        @internal_client.post("#{LTL_BASE}/quotes/#{carrier_id}", params, config)
       end
 
       # List LTL quotes.
@@ -45,8 +43,7 @@ module ShipEngineRb
       # @example
       #   quotes = client.ltl.list_quotes(page: 1, page_size: 25)
       def list_quotes(params = {}, config: {})
-        response = @internal_client.get("#{LTL_BASE}/quotes", params, config)
-        response.body
+        @internal_client.get("#{LTL_BASE}/quotes", params, config)
       end
 
       # Get a specific LTL quote by ID.
@@ -57,8 +54,7 @@ module ShipEngineRb
       # @example
       #   quote = client.ltl.get_quote_by_id("se_quote_123")
       def get_quote_by_id(quote_id, config: {})
-        response = @internal_client.get("#{LTL_BASE}/quotes/#{quote_id}", {}, config)
-        response.body
+        @internal_client.get("#{LTL_BASE}/quotes/#{quote_id}", {}, config)
       end
 
       # Schedule an LTL freight pickup.
@@ -69,8 +65,7 @@ module ShipEngineRb
       # @example
       #   pickup = client.ltl.schedule_pickup({ carrier_id: "se_123", pickup_window: {...} })
       def schedule_pickup(params, config: {})
-        response = @internal_client.post("#{LTL_BASE}/pickups", params, config)
-        response.body
+        @internal_client.post("#{LTL_BASE}/pickups", params, config)
       end
 
       # Get an LTL pickup by ID.
@@ -81,8 +76,7 @@ module ShipEngineRb
       # @example
       #   pickup = client.ltl.get_pickup("se_pickup_123")
       def get_pickup(pickup_id, config: {})
-        response = @internal_client.get("#{LTL_BASE}/pickups/#{pickup_id}", {}, config)
-        response.body
+        @internal_client.get("#{LTL_BASE}/pickups/#{pickup_id}", {}, config)
       end
 
       # Update an LTL pickup.
@@ -94,8 +88,7 @@ module ShipEngineRb
       # @example
       #   pickup = client.ltl.update_pickup("se_pickup_123", { pickup_window: {...} })
       def update_pickup(pickup_id, params, config: {})
-        response = @internal_client.put("#{LTL_BASE}/pickups/#{pickup_id}", params, config)
-        response.body
+        @internal_client.put("#{LTL_BASE}/pickups/#{pickup_id}", params, config)
       end
 
       # Cancel an LTL pickup.
@@ -106,8 +99,7 @@ module ShipEngineRb
       # @example
       #   client.ltl.cancel_pickup("se_pickup_123")
       def cancel_pickup(pickup_id, config: {})
-        response = @internal_client.delete("#{LTL_BASE}/pickups/#{pickup_id}", {}, config)
-        response.body
+        @internal_client.delete("#{LTL_BASE}/pickups/#{pickup_id}", {}, config)
       end
 
       # Track an LTL shipment.
@@ -118,8 +110,7 @@ module ShipEngineRb
       # @example
       #   tracking = client.ltl.track({ carrier_code: "se_123", tracking_number: "1Z999..." })
       def track(params = {}, config: {})
-        response = @internal_client.get("#{LTL_BASE}/tracking", params, config)
-        response.body
+        @internal_client.get("#{LTL_BASE}/tracking", params, config)
       end
     end
   end

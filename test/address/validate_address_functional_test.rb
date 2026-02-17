@@ -137,20 +137,20 @@ describe 'Validate Address: Functional' do
            }].to_json)
 
     response = client.addresses.validate(params)
-    assert_equal 'verified', response[0]['status']
-    assert_equal '4 Jersey St.', response[0]['original_address']['address_line1']
-    assert_equal 'Suite 200', response[0]['original_address']['address_line2']
-    assert_equal '2nd Floor', response[0]['original_address']['address_line3']
-    assert_equal 'Boston', response[0]['original_address']['city_locality']
-    assert_equal 'MA', response[0]['original_address']['state_province']
-    assert_equal '02215', response[0]['original_address']['postal_code']
-    assert_equal 'US', response[0]['original_address']['country_code']
-    assert_equal '4 JERSEY ST STE 200', response[0]['matched_address']['address_line1']
-    assert_equal '', response[0]['matched_address']['address_line2']
-    assert_equal '2ND FLOOR', response[0]['matched_address']['address_line3']
-    assert_equal 'BOSTON', response[0]['matched_address']['city_locality']
-    assert_equal '02215-4148', response[0]['matched_address']['postal_code']
-    assert_equal [], response[0]['messages']
+    assert_equal 'verified', response[0][:status]
+    assert_equal '4 Jersey St.', response[0][:original_address][:address_line1]
+    assert_equal 'Suite 200', response[0][:original_address][:address_line2]
+    assert_equal '2nd Floor', response[0][:original_address][:address_line3]
+    assert_equal 'Boston', response[0][:original_address][:city_locality]
+    assert_equal 'MA', response[0][:original_address][:state_province]
+    assert_equal '02215', response[0][:original_address][:postal_code]
+    assert_equal 'US', response[0][:original_address][:country_code]
+    assert_equal '4 JERSEY ST STE 200', response[0][:matched_address][:address_line1]
+    assert_equal '', response[0][:matched_address][:address_line2]
+    assert_equal '2ND FLOOR', response[0][:matched_address][:address_line3]
+    assert_equal 'BOSTON', response[0][:matched_address][:city_locality]
+    assert_equal '02215-4148', response[0][:matched_address][:postal_code]
+    assert_equal [], response[0][:messages]
     assert_requested(stub, times: 1)
   end
 
@@ -199,16 +199,16 @@ describe 'Validate Address: Functional' do
            }].to_json)
 
     response = client.addresses.validate(params)
-    assert_equal 'verified', response[0]['status']
-    assert_equal 'John Smith', response[0]['original_address']['name']
-    assert_equal '3910 Bailey Lane', response[0]['original_address']['address_line1']
-    assert_equal 'Austin', response[0]['original_address']['city_locality']
-    assert_equal 'TX', response[0]['original_address']['state_province']
-    assert_equal '78756', response[0]['original_address']['postal_code']
-    assert_equal 'JOHN SMITH', response[0]['matched_address']['name']
-    assert_equal '3910 BAILEY LN', response[0]['matched_address']['address_line1']
-    assert_equal '78756-3924', response[0]['matched_address']['postal_code']
-    assert_equal [], response[0]['messages']
+    assert_equal 'verified', response[0][:status]
+    assert_equal 'John Smith', response[0][:original_address][:name]
+    assert_equal '3910 Bailey Lane', response[0][:original_address][:address_line1]
+    assert_equal 'Austin', response[0][:original_address][:city_locality]
+    assert_equal 'TX', response[0][:original_address][:state_province]
+    assert_equal '78756', response[0][:original_address][:postal_code]
+    assert_equal 'JOHN SMITH', response[0][:matched_address][:name]
+    assert_equal '3910 BAILEY LN', response[0][:matched_address][:address_line1]
+    assert_equal '78756-3924', response[0][:matched_address][:postal_code]
+    assert_equal [], response[0][:messages]
     assert_requested(stub, times: 1)
   end
 
@@ -269,15 +269,15 @@ describe 'Validate Address: Functional' do
            }].to_json)
 
     response = client.addresses.validate(params)
-    assert_equal 'error', response[0]['status']
-    assert_equal 'John Smith', response[0]['original_address']['name']
-    assert_equal 'Winchester Blvd', response[0]['original_address']['address_line1']
-    assert_equal 'WINCHESTER BLVD', response[0]['matched_address']['address_line1']
-    assert_equal 2, response[0]['messages'].length
-    assert_equal 'a1004', response[0]['messages'][0]['code']
-    assert_equal 'Address not found', response[0]['messages'][0]['message']
-    assert_equal 'warning', response[0]['messages'][0]['type']
-    assert_equal 'Insufficient or Incorrect Address Data', response[0]['messages'][1]['message']
+    assert_equal 'error', response[0][:status]
+    assert_equal 'John Smith', response[0][:original_address][:name]
+    assert_equal 'Winchester Blvd', response[0][:original_address][:address_line1]
+    assert_equal 'WINCHESTER BLVD', response[0][:matched_address][:address_line1]
+    assert_equal 2, response[0][:messages].length
+    assert_equal 'a1004', response[0][:messages][0][:code]
+    assert_equal 'Address not found', response[0][:messages][0][:message]
+    assert_equal 'warning', response[0][:messages][0][:type]
+    assert_equal 'Insufficient or Incorrect Address Data', response[0][:messages][1][:message]
     assert_requested(stub, times: 1)
   end
 end

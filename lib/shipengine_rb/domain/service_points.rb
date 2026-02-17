@@ -18,8 +18,7 @@ module ShipEngineRb
       # @example
       #   client.service_points.list(carrier_code: "ups", country_code: "US", postal_code: "78756")
       def list(params = {}, config: {})
-        response = @internal_client.post('/v1/service_points/list', params, config)
-        response.body
+        @internal_client.post('/v1/service_points/list', params, config)
       end
 
       # Retrieves a single service point by carrier, country, and service point ID.
@@ -33,10 +32,9 @@ module ShipEngineRb
       # @example
       #   client.service_points.get_by_id("ups", "US", "12345")
       def get_by_id(carrier_code, country_code, service_point_id, config: {})
-        response = @internal_client.get(
+        @internal_client.get(
           "/v1/service_points/#{carrier_code}/#{country_code}/#{service_point_id}", {}, config
         )
-        response.body
       end
     end
   end

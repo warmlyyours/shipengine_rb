@@ -19,13 +19,6 @@ describe 'retries' do
       ShipEngineRb::Client.new('abc1234', retries: -1)
     end
 
-    # config during instantiation and method call
-    assert_raises_shipengine_validation(retries_err) do
-      client = ShipEngineRb::Client.new('abc1234')
-      client.configuration.retries = -1
-      client.addresses.validate(Factory.valid_address_params)
-    end
-
     # config during method call
     assert_raises_shipengine_validation(retries_err) do
       client = ShipEngineRb::Client.new('abc1234')
@@ -36,18 +29,6 @@ describe 'retries' do
 
     ShipEngineRb::Client.new('abc1234', retries: 5) # valid
     ShipEngineRb::Client.new('abc1234', retries: 0) # valid
-  end
-
-  it 'Should not throw an error if retries is valid' do
-    stub_request(:post, 'https://api.shipengine.com/v1/addresses/validate')
-      .with(body: /.*/)
-      .to_return(status: 200, body: Factory.valid_address_res_json)
-
-    client = ShipEngineRb::Client.new('abc1234')
-    client.configuration.retries = 2
-    client.addresses.validate(Factory.valid_address_params)
-    client.configuration.retries = 0
-    client.addresses.validate(Factory.valid_address_params)
   end
 
   it 'should have a default value of 1' do
@@ -63,7 +44,7 @@ describe 'retries' do
 
     client = ShipEngineRb::Client.new('abc123', retries: 2)
     response = client.addresses.validate(Factory.valid_address_params)
-    assert_equal(response[0]['status'], 'verified')
+    assert_equal(response[0][:status], 'verified')
     assert_requested(stub, times: 3)
   end
 

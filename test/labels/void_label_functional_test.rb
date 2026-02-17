@@ -41,8 +41,8 @@ describe 'Void Label from Label Id: Functional' do
            }.to_json)
 
     response = client.labels.void('se-28529731')
-    assert_equal true, response['approved']
-    assert_equal 'Request for refund submitted.  This label has been voided.', response['message']
+    assert_equal true, response[:approved]
+    assert_equal 'Request for refund submitted.  This label has been voided.', response[:message]
     assert_requested(stub, times: 1)
   end
 end

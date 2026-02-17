@@ -17,8 +17,8 @@ describe 'Warehouses' do
            }.to_json)
 
     response = client.warehouses.list
-    assert_equal 1, response['warehouses'].length
-    assert_equal 'wh-123', response['warehouses'][0]['warehouse_id']
+    assert_equal 1, response[:warehouses].length
+    assert_equal 'wh-123', response[:warehouses][0][:warehouse_id]
     assert_requested(stub, times: 1)
   end
 
@@ -30,7 +30,7 @@ describe 'Warehouses' do
            .to_return(status: 200, body: { warehouse_id: 'wh-456', name: 'New Warehouse' }.to_json)
 
     response = client.warehouses.create(params)
-    assert_equal 'wh-456', response['warehouse_id']
+    assert_equal 'wh-456', response[:warehouse_id]
     assert_requested(stub, times: 1)
   end
 
@@ -39,7 +39,7 @@ describe 'Warehouses' do
            .to_return(status: 200, body: { warehouse_id: 'wh-123', name: 'Main Warehouse' }.to_json)
 
     response = client.warehouses.get_by_id('wh-123')
-    assert_equal 'wh-123', response['warehouse_id']
+    assert_equal 'wh-123', response[:warehouse_id]
     assert_requested(stub, times: 1)
   end
 

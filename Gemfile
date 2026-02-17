@@ -33,3 +33,5 @@ group :test, :development do
 end
 
 gemspec
+
+gem 'faraday-http', '~> 2.0'

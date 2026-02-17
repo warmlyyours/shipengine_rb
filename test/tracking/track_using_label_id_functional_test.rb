@@ -64,17 +64,17 @@ describe 'Track using label id: Functional' do
            }.to_json)
 
     response = client.tracking.track_by_label_id('se-324658')
-    assert_equal '1Z932R800390810600', response['tracking_number']
-    assert_equal 'DE', response['status_code']
-    assert_equal 'Delivered', response['status_description']
-    assert_equal 'D', response['carrier_status_code']
-    assert_equal 'DELIVERED', response['carrier_status_description']
-    assert_equal 1, response['events'].length
-    assert_equal 'Arrived at USPS Facility', response['events'][0]['description']
-    assert_equal 'OCEANSIDE', response['events'][0]['city_locality']
-    assert_equal 'CA', response['events'][0]['state_province']
-    assert_equal '92056', response['events'][0]['postal_code']
-    assert_equal 'U1', response['events'][0]['event_code']
+    assert_equal '1Z932R800390810600', response[:tracking_number]
+    assert_equal 'DE', response[:status_code]
+    assert_equal 'Delivered', response[:status_description]
+    assert_equal 'D', response[:carrier_status_code]
+    assert_equal 'DELIVERED', response[:carrier_status_description]
+    assert_equal 1, response[:events].length
+    assert_equal 'Arrived at USPS Facility', response[:events][0][:description]
+    assert_equal 'OCEANSIDE', response[:events][0][:city_locality]
+    assert_equal 'CA', response[:events][0][:state_province]
+    assert_equal '92056', response[:events][0][:postal_code]
+    assert_equal 'U1', response[:events][0][:event_code]
     assert_requested(stub, times: 1)
   end
 end

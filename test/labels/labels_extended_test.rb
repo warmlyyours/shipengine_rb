@@ -18,8 +18,8 @@ describe 'Labels Extended Operations' do
            }.to_json)
 
     response = client.labels.list
-    assert_equal 1, response['total']
-    assert_equal 'se-label-1', response['labels'][0]['label_id']
+    assert_equal 1, response[:total]
+    assert_equal 'se-label-1', response[:labels][0][:label_id]
     assert_requested(stub, times: 1)
   end
 
@@ -28,7 +28,7 @@ describe 'Labels Extended Operations' do
            .to_return(status: 200, body: { label_id: 'se-label-1', status: 'completed' }.to_json)
 
     response = client.labels.get_by_id('se-label-1')
-    assert_equal 'se-label-1', response['label_id']
+    assert_equal 'se-label-1', response[:label_id]
     assert_requested(stub, times: 1)
   end
 
@@ -37,7 +37,7 @@ describe 'Labels Extended Operations' do
            .to_return(status: 200, body: { label_id: 'se-label-1' }.to_json)
 
     response = client.labels.get_by_external_shipment_id('ext-ship-1')
-    assert_equal 'se-label-1', response['label_id']
+    assert_equal 'se-label-1', response[:label_id]
     assert_requested(stub, times: 1)
   end
 
@@ -49,8 +49,8 @@ describe 'Labels Extended Operations' do
            .to_return(status: 200, body: { label_id: 'se-return-1', is_return_label: true }.to_json)
 
     response = client.labels.create_return_label('se-label-1', params)
-    assert_equal true, response['is_return_label']
-    assert_equal 'se-return-1', response['label_id']
+    assert_equal true, response[:is_return_label]
+    assert_equal 'se-return-1', response[:label_id]
     assert_requested(stub, times: 1)
   end
 
@@ -62,8 +62,8 @@ describe 'Labels Extended Operations' do
            .to_return(status: 200, body: { label_id: 'se-label-new', shipment_id: 'se-ship-1' }.to_json)
 
     response = client.labels.create_from_shipment_id('se-ship-1', params)
-    assert_equal 'se-label-new', response['label_id']
-    assert_equal 'se-ship-1', response['shipment_id']
+    assert_equal 'se-label-new', response[:label_id]
+    assert_equal 'se-ship-1', response[:shipment_id]
     assert_requested(stub, times: 1)
   end
 end

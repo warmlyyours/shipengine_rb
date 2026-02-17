@@ -110,19 +110,19 @@ describe 'Create Label from Shipment Details: Functional' do
            }.to_json)
 
     response = client.labels.create_from_shipment_details({})
-    assert_equal 'se-28529731', response['label_id']
-    assert_equal 'processing', response['status']
-    assert_equal 'se-28529731', response['shipment_id']
-    assert_equal '782758401696', response['tracking_number']
-    assert_equal true, response['is_return_label']
-    assert_equal 'usps_first_class_mail', response['service_code']
-    assert_equal 'small_flat_rate_box', response['package_code']
-    assert_equal 'pdf', response['label_format']
-    assert_equal 'http://api.shipengine.com/v1/labels/se-28529731', response['label_download']['href']
-    assert_equal 1, response['packages'].length
-    assert_equal 'small_flat_rate_box', response['packages'][0]['package_code']
-    assert_equal 0, response['packages'][0]['weight']['value']
-    assert_equal 'pound', response['packages'][0]['weight']['unit']
+    assert_equal 'se-28529731', response[:label_id]
+    assert_equal 'processing', response[:status]
+    assert_equal 'se-28529731', response[:shipment_id]
+    assert_equal '782758401696', response[:tracking_number]
+    assert_equal true, response[:is_return_label]
+    assert_equal 'usps_first_class_mail', response[:service_code]
+    assert_equal 'small_flat_rate_box', response[:package_code]
+    assert_equal 'pdf', response[:label_format]
+    assert_equal 'http://api.shipengine.com/v1/labels/se-28529731', response[:label_download][:href]
+    assert_equal 1, response[:packages].length
+    assert_equal 'small_flat_rate_box', response[:packages][0][:package_code]
+    assert_equal 0, response[:packages][0][:weight][:value]
+    assert_equal 'pound', response[:packages][0][:weight][:unit]
     assert_requested(stub, times: 1)
   end
 end

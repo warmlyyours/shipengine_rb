@@ -28,8 +28,8 @@ describe 'Parse Address' do
            }.to_json)
 
     response = client.addresses.parse(params)
-    assert_equal '525 S Winchester Blvd', response['address']['address_line1']
-    assert_equal 0.97, response['score']
+    assert_equal '525 S Winchester Blvd', response[:address][:address_line1]
+    assert_equal 0.97, response[:score]
     assert_requested(stub, times: 1)
   end
 end

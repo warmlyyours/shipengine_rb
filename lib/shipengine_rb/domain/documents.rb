@@ -17,8 +17,7 @@ module ShipEngineRb
       # @example
       #   doc = client.documents.create_combined_label_document({ label_ids: ["se_1", "se_2"], format: "pdf" })
       def create_combined_label_document(params, config: {})
-        response = @internal_client.post('/v1/documents/combined_labels', params, config)
-        response.body
+        @internal_client.post('/v1/documents/combined_labels', params, config)
       end
     end
   end

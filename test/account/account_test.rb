@@ -15,7 +15,7 @@ describe 'Account' do
            .to_return(status: 200, body: { account_id: 'acc-123' }.to_json)
 
     response = client.account.get_settings
-    assert_equal 'acc-123', response['account_id']
+    assert_equal 'acc-123', response[:account_id]
     assert_requested(stub, times: 1)
   end
 
@@ -35,7 +35,7 @@ describe 'Account' do
            .to_return(status: 200, body: { images: [{ image_id: 'img-1' }] }.to_json)
 
     response = client.account.list_images
-    assert_equal 'img-1', response['images'][0]['image_id']
+    assert_equal 'img-1', response[:images][0][:image_id]
     assert_requested(stub, times: 1)
   end
 
@@ -44,7 +44,7 @@ describe 'Account' do
            .to_return(status: 200, body: { image_id: 'img-1', label_image_url: 'https://...' }.to_json)
 
     response = client.account.get_image('img-1')
-    assert_equal 'img-1', response['image_id']
+    assert_equal 'img-1', response[:image_id]
     assert_requested(stub, times: 1)
   end
 
@@ -56,7 +56,7 @@ describe 'Account' do
            .to_return(status: 200, body: { image_id: 'img-2' }.to_json)
 
     response = client.account.create_image(params)
-    assert_equal 'img-2', response['image_id']
+    assert_equal 'img-2', response[:image_id]
     assert_requested(stub, times: 1)
   end
 

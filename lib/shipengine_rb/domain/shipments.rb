@@ -5,6 +5,8 @@ module ShipEngineRb
     # Domain class for managing shipments. Provides methods to create, list, update,
     # cancel shipments, manage tags, parse addresses, and get shipping rates.
     class Shipments
+      include ShipEngineRb::Pagination
+
       def initialize(internal_client)
         @internal_client = internal_client
       end
@@ -18,8 +20,15 @@ module ShipEngineRb
       # @example
       #   client.shipments.list(page: 1, page_size: 25, shipment_status: "label_purchased")
       def list(params = {}, config: {})
-        response = @internal_client.get('/v1/shipments', params, config)
-        response.body
+        @internal_client.get('/v1/shipments', params, config)
+      end
+
+      def list_all(params = {}, config: {})
+        paginate_all(:list, :shipments, params, config:)
+      end
+
+      def list_each(params = {}, config: {}, &)
+        paginate_each(:list, :shipments, params, config:, &)
       end
 
       # Creates a new shipment.
@@ -31,8 +40,7 @@ module ShipEngineRb
       # @example
       #   client.shipments.create(service_code: "ups_ground", ship_to: {...}, packages: [...])
       def create(params, config: {})
-        response = @internal_client.post('/v1/shipments', params, config)
-        response.body
+        @internal_client.post('/v1/shipments', params, config)
       end
 
       # Retrieves a shipment by its ID.
@@ -44,8 +52,7 @@ module ShipEngineRb
       # @example
       #   client.shipments.get_by_id("se-123")
       def get_by_id(shipment_id, config: {})
-        response = @internal_client.get("/v1/shipments/#{shipment_id}", {}, config)
-        response.body
+        @internal_client.get("/v1/shipments/#{shipment_id}", {}, config)
       end
 
       # Updates an existing shipment.
@@ -58,8 +65,7 @@ module ShipEngineRb
       # @example
       #   client.shipments.update("se-123", ship_to: { address_line1: "123 New St" })
       def update(shipment_id, params, config: {})
-        response = @internal_client.put("/v1/shipments/#{shipment_id}", params, config)
-        response.body
+        @internal_client.put("/v1/shipments/#{shipment_id}", params, config)
       end
 
       # Cancels a shipment.
@@ -71,8 +77,7 @@ module ShipEngineRb
       # @example
       #   client.shipments.cancel("se-123")
       def cancel(shipment_id, config: {})
-        response = @internal_client.put("/v1/shipments/#{shipment_id}/cancel", {}, config)
-        response.body
+        @internal_client.put("/v1/shipments/#{shipment_id}/cancel", {}, config)
       end
 
       # Adds a tag to a shipment.
@@ -85,8 +90,7 @@ module ShipEngineRb
       # @example
       #   client.shipments.add_tag("se-123", "priority")
       def add_tag(shipment_id, tag_name, config: {})
-        response = @internal_client.post("/v1/shipments/#{shipment_id}/tags/#{tag_name}", {}, config)
-        response.body
+        @internal_client.post("/v1/shipments/#{shipment_id}/tags/#{tag_name}", {}, config)
       end
 
       # Removes a tag from a shipment.
@@ -99,8 +103,7 @@ module ShipEngineRb
       # @example
       #   client.shipments.remove_tag("se-123", "priority")
       def remove_tag(shipment_id, tag_name, config: {})
-        response = @internal_client.delete("/v1/shipments/#{shipment_id}/tags/#{tag_name}", {}, config)
-        response.body
+        @internal_client.delete("/v1/shipments/#{shipment_id}/tags/#{tag_name}", {}, config)
       end
 
       # Retrieves a shipment by its external ID (your system's reference).
@@ -112,8 +115,7 @@ module ShipEngineRb
       # @example
       #   client.shipments.get_by_external_id("order-456")
       def get_by_external_id(external_shipment_id, config: {})
-        response = @internal_client.get("/v1/shipments/external_shipment_id/#{external_shipment_id}", {}, config)
-        response.body
+        @internal_client.get("/v1/shipments/external_shipment_id/#{external_shipment_id}", {}, config)
       end
 
       # Parses unstructured address text into structured address components.
@@ -125,8 +127,7 @@ module ShipEngineRb
       # @example
       #   client.shipments.parse(text: "123 Main St, Austin TX 78701")
       def parse(params, config: {})
-        response = @internal_client.put('/v1/shipments/recognize', params, config)
-        response.body
+        @internal_client.put('/v1/shipments/recognize', params, config)
       end
 
       # Gets available shipping rates for a shipment.
@@ -139,8 +140,7 @@ module ShipEngineRb
       # @example
       #   client.shipments.get_rates("se-123")
       def get_rates(shipment_id, params = {}, config: {})
-        response = @internal_client.get("/v1/shipments/#{shipment_id}/rates", params, config)
-        response.body
+        @internal_client.get("/v1/shipments/#{shipment_id}/rates", params, config)
       end
 
       # Lists all tags associated with a shipment.
@@ -152,8 +152,7 @@ module ShipEngineRb
       # @example
       #   client.shipments.list_tags("se-123")
       def list_tags(shipment_id, config: {})
-        response = @internal_client.get("/v1/shipments/#{shipment_id}/tags", {}, config)
-        response.body
+        @internal_client.get("/v1/shipments/#{shipment_id}/tags", {}, config)
       end
 
       # Bulk updates tags across multiple shipments.
@@ -165,8 +164,7 @@ module ShipEngineRb
       # @example
       #   client.shipments.update_tags(shipment_ids: ["se-123"], tags: [{ name: "priority" }])
       def update_tags(params, config: {})
-        response = @internal_client.put('/v1/shipments/tags', params, config)
-        response.body
+        @internal_client.put('/v1/shipments/tags', params, config)
       end
     end
   end

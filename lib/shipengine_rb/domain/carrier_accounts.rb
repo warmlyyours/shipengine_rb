@@ -18,8 +18,7 @@ module ShipEngineRb
       # @example
       #   result = client.carrier_accounts.connect("fedex", { credentials: { ... } })
       def connect(carrier_name, params, config: {})
-        response = @internal_client.post("/v1/connections/carriers/#{carrier_name}", params, config)
-        response.body
+        @internal_client.post("/v1/connections/carriers/#{carrier_name}", params, config)
       end
 
       # Disconnects a carrier account from your ShipEngine account.
@@ -31,8 +30,7 @@ module ShipEngineRb
       # @example
       #   client.carrier_accounts.disconnect("fedex", "se_123")
       def disconnect(carrier_name, carrier_id, config: {})
-        response = @internal_client.delete("/v1/connections/carriers/#{carrier_name}/#{carrier_id}", {}, config)
-        response.body
+        @internal_client.delete("/v1/connections/carriers/#{carrier_name}/#{carrier_id}", {}, config)
       end
 
       # @param carrier_name [String]
@@ -40,8 +38,7 @@ module ShipEngineRb
       # @param config [Hash?]
       # @return [Hash]
       def get_settings(carrier_name, carrier_id, config: {})
-        response = @internal_client.get("/v1/connections/carriers/#{carrier_name}/#{carrier_id}/settings", {}, config)
-        response.body
+        @internal_client.get("/v1/connections/carriers/#{carrier_name}/#{carrier_id}/settings", {}, config)
       end
 
       # Updates settings for a connected carrier account.
@@ -54,10 +51,9 @@ module ShipEngineRb
       # @example
       #   settings = client.carrier_accounts.update_settings("fedex", "se_123", { nickname: "Main FedEx" })
       def update_settings(carrier_name, carrier_id, params, config: {})
-        response = @internal_client.put(
+        @internal_client.put(
           "/v1/connections/carriers/#{carrier_name}/#{carrier_id}/settings", params, config
         )
-        response.body
       end
     end
   end

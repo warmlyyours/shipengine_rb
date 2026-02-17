@@ -18,7 +18,7 @@ describe 'Manifests' do
            }.to_json)
 
     response = client.manifests.list
-    assert_equal 1, response['total']
+    assert_equal 1, response[:total]
     assert_requested(stub, times: 1)
   end
 
@@ -30,7 +30,7 @@ describe 'Manifests' do
            .to_return(status: 200, body: { manifest_id: 'man-2' }.to_json)
 
     response = client.manifests.create(params)
-    assert_equal 'man-2', response['manifest_id']
+    assert_equal 'man-2', response[:manifest_id]
     assert_requested(stub, times: 1)
   end
 
@@ -39,7 +39,7 @@ describe 'Manifests' do
            .to_return(status: 200, body: { manifest_id: 'man-1' }.to_json)
 
     response = client.manifests.get_by_id('man-1')
-    assert_equal 'man-1', response['manifest_id']
+    assert_equal 'man-1', response[:manifest_id]
     assert_requested(stub, times: 1)
   end
 
@@ -48,8 +48,8 @@ describe 'Manifests' do
            .to_return(status: 200, body: { manifest_request_id: 'req-1', status: 'completed' }.to_json)
 
     response = client.manifests.get_request_by_id('req-1')
-    assert_equal 'req-1', response['manifest_request_id']
-    assert_equal 'completed', response['status']
+    assert_equal 'req-1', response[:manifest_request_id]
+    assert_equal 'completed', response[:status]
     assert_requested(stub, times: 1)
   end
 end

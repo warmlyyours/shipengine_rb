@@ -17,7 +17,7 @@ describe 'Tags' do
            }.to_json)
 
     response = client.tags.list
-    assert_equal 2, response['tags'].length
+    assert_equal 2, response[:tags].length
     assert_requested(stub, times: 1)
   end
 
@@ -26,7 +26,7 @@ describe 'Tags' do
            .to_return(status: 200, body: { name: 'priority' }.to_json)
 
     response = client.tags.create('priority')
-    assert_equal 'priority', response['name']
+    assert_equal 'priority', response[:name]
     assert_requested(stub, times: 1)
   end
 

@@ -5,6 +5,8 @@ module ShipEngineRb
     # Manifests domain for creating and managing carrier manifests.
     # Manifests are used to close out a day's shipments with carriers.
     class Manifests
+      include ShipEngineRb::Pagination
+
       def initialize(internal_client)
         @internal_client = internal_client
       end
@@ -17,8 +19,15 @@ module ShipEngineRb
       # @example
       #   manifests = client.manifests.list(page: 1, page_size: 25)
       def list(params = {}, config: {})
-        response = @internal_client.get('/v1/manifests', params, config)
-        response.body
+        @internal_client.get('/v1/manifests', params, config)
+      end
+
+      def list_all(params = {}, config: {})
+        paginate_all(:list, :manifests, params, config:)
+      end
+
+      def list_each(params = {}, config: {}, &)
+        paginate_each(:list, :manifests, params, config:, &)
       end
 
       # Creates a new manifest for a carrier.
@@ -29,8 +38,7 @@ module ShipEngineRb
       # @example
       #   manifest = client.manifests.create({ carrier_id: "se_123", ship_date: "2024-01-15" })
       def create(params, config: {})
-        response = @internal_client.post('/v1/manifests', params, config)
-        response.body
+        @internal_client.post('/v1/manifests', params, config)
       end
 
       # Retrieves a manifest by its ShipEngine manifest ID.
@@ -41,8 +49,7 @@ module ShipEngineRb
       # @example
       #   manifest = client.manifests.get_by_id("se_manifest_123")
       def get_by_id(manifest_id, config: {})
-        response = @internal_client.get("/v1/manifests/#{manifest_id}", {}, config)
-        response.body
+        @internal_client.get("/v1/manifests/#{manifest_id}", {}, config)
       end
 
       # Retrieves a manifest request by its request ID (for async manifest creation).
@@ -53,8 +60,7 @@ module ShipEngineRb
       # @example
       #   request = client.manifests.get_request_by_id("se_request_123")
       def get_request_by_id(request_id, config: {})
-        response = @internal_client.get("/v1/manifests/requests/#{request_id}", {}, config)
-        response.body
+        @internal_client.get("/v1/manifests/requests/#{request_id}", {}, config)
       end
     end
   end

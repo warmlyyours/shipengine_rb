@@ -308,28 +308,28 @@ describe 'Get rate with shipment details: Functional test' do
            }.to_json)
 
     response = client.rates.get_with_shipment_details(params)
-    assert_equal 'se-28529731', response['shipment_id']
-    assert_equal 'se-28529731', response['carrier_id']
-    assert_equal 'usps_first_class_mail', response['service_code']
-    assert_equal 'pending', response['shipment_status']
-    assert_equal 'John Doe', response['ship_to']['name']
-    assert_equal '1999 Bishop Grandin Blvd.', response['ship_to']['address_line1']
-    assert_equal 'Winnipeg', response['ship_to']['city_locality']
-    assert_equal 'CA', response['ship_to']['country_code']
-    assert_equal 'se-28529731', response['warehouse_id']
-    assert_equal 'none', response['confirmation']
-    assert_equal 'pickup', response['origin_type']
-    assert_equal 'amazon_ca', response['order_source_code']
-    assert_equal 1, response['packages'].length
-    assert_equal 'small_flat_rate_box', response['packages'][0]['package_code']
-    assert_equal 'working', response['rate_response']['status']
-    assert_equal 'se-28529731', response['rate_response']['rate_request_id']
-    assert_equal 1, response['rate_response']['rates'].length
-    assert_equal 'se-28529731', response['rate_response']['rates'][0]['rate_id']
-    assert_equal 'check', response['rate_response']['rates'][0]['rate_type']
-    assert_equal 5, response['rate_response']['rates'][0]['delivery_days']
-    assert_equal 1, response['rate_response']['errors'].length
-    assert_equal 'auto_fund_not_supported', response['rate_response']['errors'][0]['error_code']
+    assert_equal 'se-28529731', response[:shipment_id]
+    assert_equal 'se-28529731', response[:carrier_id]
+    assert_equal 'usps_first_class_mail', response[:service_code]
+    assert_equal 'pending', response[:shipment_status]
+    assert_equal 'John Doe', response[:ship_to][:name]
+    assert_equal '1999 Bishop Grandin Blvd.', response[:ship_to][:address_line1]
+    assert_equal 'Winnipeg', response[:ship_to][:city_locality]
+    assert_equal 'CA', response[:ship_to][:country_code]
+    assert_equal 'se-28529731', response[:warehouse_id]
+    assert_equal 'none', response[:confirmation]
+    assert_equal 'pickup', response[:origin_type]
+    assert_equal 'amazon_ca', response[:order_source_code]
+    assert_equal 1, response[:packages].length
+    assert_equal 'small_flat_rate_box', response[:packages][0][:package_code]
+    assert_equal 'working', response[:rate_response][:status]
+    assert_equal 'se-28529731', response[:rate_response][:rate_request_id]
+    assert_equal 1, response[:rate_response][:rates].length
+    assert_equal 'se-28529731', response[:rate_response][:rates][0][:rate_id]
+    assert_equal 'check', response[:rate_response][:rates][0][:rate_type]
+    assert_equal 5, response[:rate_response][:rates][0][:delivery_days]
+    assert_equal 1, response[:rate_response][:errors].length
+    assert_equal 'auto_fund_not_supported', response[:rate_response][:errors][0][:error_code]
     assert_requested(stub, times: 1)
   end
 end

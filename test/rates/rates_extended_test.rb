@@ -29,7 +29,7 @@ describe 'Rates Extended Operations' do
 
     response = client.rates.estimate(params)
     assert_equal 1, response.length
-    assert_equal 'usps_priority', response[0]['service_code']
+    assert_equal 'usps_priority', response[0][:service_code]
     assert_requested(stub, times: 1)
   end
 
@@ -38,7 +38,7 @@ describe 'Rates Extended Operations' do
            .to_return(status: 200, body: { rate_id: 'se-rate-1', rate_type: 'shipment' }.to_json)
 
     response = client.rates.get_by_id('se-rate-1')
-    assert_equal 'se-rate-1', response['rate_id']
+    assert_equal 'se-rate-1', response[:rate_id]
     assert_requested(stub, times: 1)
   end
 

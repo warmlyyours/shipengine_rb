@@ -17,8 +17,7 @@ module ShipEngineRb
       # @example
       #   client.webhooks.list
       def list(config: {})
-        response = @internal_client.get('/v1/environment/webhooks', {}, config)
-        response.body
+        @internal_client.get('/v1/environment/webhooks', {}, config)
       end
 
       # Creates a new webhook subscription.
@@ -30,8 +29,7 @@ module ShipEngineRb
       # @example
       #   client.webhooks.create(url: "https://example.com/webhook", event: "track")
       def create(params, config: {})
-        response = @internal_client.post('/v1/environment/webhooks', params, config)
-        response.body
+        @internal_client.post('/v1/environment/webhooks', params, config)
       end
 
       # Retrieves a webhook by its ID.
@@ -43,8 +41,7 @@ module ShipEngineRb
       # @example
       #   client.webhooks.get_by_id("se-webhook-123")
       def get_by_id(webhook_id, config: {})
-        response = @internal_client.get("/v1/environment/webhooks/#{webhook_id}", {}, config)
-        response.body
+        @internal_client.get("/v1/environment/webhooks/#{webhook_id}", {}, config)
       end
 
       # Updates an existing webhook.
@@ -57,8 +54,7 @@ module ShipEngineRb
       # @example
       #   client.webhooks.update("se-webhook-123", url: "https://example.com/new-webhook")
       def update(webhook_id, params, config: {})
-        response = @internal_client.put("/v1/environment/webhooks/#{webhook_id}", params, config)
-        response.body
+        @internal_client.put("/v1/environment/webhooks/#{webhook_id}", params, config)
       end
 
       # Deletes a webhook subscription.
@@ -70,8 +66,7 @@ module ShipEngineRb
       # @example
       #   client.webhooks.delete("se-webhook-123")
       def delete(webhook_id, config: {})
-        response = @internal_client.delete("/v1/environment/webhooks/#{webhook_id}", {}, config)
-        response.body
+        @internal_client.delete("/v1/environment/webhooks/#{webhook_id}", {}, config)
       end
     end
   end

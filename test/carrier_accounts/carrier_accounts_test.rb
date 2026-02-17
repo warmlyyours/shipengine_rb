@@ -18,7 +18,7 @@ describe 'Carrier Accounts' do
            .to_return(status: 200, body: { carrier_id: 'se-fedex-1' }.to_json)
 
     response = client.carrier_accounts.connect('fedex', params)
-    assert_equal 'se-fedex-1', response['carrier_id']
+    assert_equal 'se-fedex-1', response[:carrier_id]
     assert_requested(stub, times: 1)
   end
 
@@ -35,8 +35,8 @@ describe 'Carrier Accounts' do
            .to_return(status: 200, body: { nickname: 'My FedEx', is_primary_account: true }.to_json)
 
     response = client.carrier_accounts.get_settings('fedex', 'se-fedex-1')
-    assert_equal 'My FedEx', response['nickname']
-    assert_equal true, response['is_primary_account']
+    assert_equal 'My FedEx', response[:nickname]
+    assert_equal true, response[:is_primary_account]
     assert_requested(stub, times: 1)
   end
 

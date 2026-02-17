@@ -18,7 +18,7 @@ describe 'Webhooks' do
 
     response = client.webhooks.list
     assert_equal 1, response.length
-    assert_equal 'wh-1', response[0]['webhook_id']
+    assert_equal 'wh-1', response[0][:webhook_id]
     assert_requested(stub, times: 1)
   end
 
@@ -30,7 +30,7 @@ describe 'Webhooks' do
            .to_return(status: 200, body: { webhook_id: 'wh-2', url: 'https://example.com/hook' }.to_json)
 
     response = client.webhooks.create(params)
-    assert_equal 'wh-2', response['webhook_id']
+    assert_equal 'wh-2', response[:webhook_id]
     assert_requested(stub, times: 1)
   end
 
@@ -39,7 +39,7 @@ describe 'Webhooks' do
            .to_return(status: 200, body: { webhook_id: 'wh-1', url: 'https://example.com/hook' }.to_json)
 
     response = client.webhooks.get_by_id('wh-1')
-    assert_equal 'wh-1', response['webhook_id']
+    assert_equal 'wh-1', response[:webhook_id]
     assert_requested(stub, times: 1)
   end
 
