@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-Dir[File.expand_path('../faraday/*.rb', __dir__)].each { |f| require f }
+require 'faraday'
+require 'faraday/retry'
+require 'json'
+require 'shipengine/middleware/raise_http_exception'
 require 'shipengine/utils/request_id'
 require 'shipengine/utils/user_agent'
-require 'faraday_middleware'
-require 'json'
 
-# frozen_string_literal: true
 module ShipEngine
   class InternalClient
     attr_reader :configuration
@@ -36,7 +36,15 @@ module ShipEngine
       request(:delete, path, options, config)
     end
 
+    # Perform an HTTP PATCH request
+    def patch(path, options = {}, config = {})
+      request(:patch, path, options, config)
+    end
+
     private
+
+    IDEMPOTENT_METHODS = %i[delete get head options put].freeze
+    private_constant :IDEMPOTENT_METHODS
 
     # @param config [::ShipEngine::Configuration]
     # @return [::Faraday::Connection]
@@ -55,21 +63,19 @@ module ShipEngine
         }
 
         conn.options.timeout = timeout / 1000
-        conn.request(:json) # auto-coerce bodies to json
+        conn.request(:json)
         conn.request(:retry, {
                        max: retries,
-                       retry_statuses: [429], # even though this seems self-evident, this field is neccessary for Retry-After to be respected.
-                       methods: Faraday::Request::Retry::IDEMPOTENT_METHODS + [:post], # :post is not a "retry_attempt-able request by default"
+                       retry_statuses: [429],
+                       methods: IDEMPOTENT_METHODS + [:post],
                        exceptions: [ShipEngine::Exceptions::RateLimitError],
-                       retry_block: proc { |env, _opts, _retries, _exception|
+                       retry_block: proc { |env:, **_kwargs|
                          env.request_headers['Retries'] = config.retries.to_s
                        }
                      })
 
-        conn.use(FaradayMiddleware::RaiseHttpException)
-        # conn.request(:retry_after_header) # should go after :retry_attempt
-        # conn.request(:request_sent, config)
-        conn.response(:json)
+        conn.use(ShipEngine::Middleware::RaiseHttpException)
+        conn.response(:json, content_type: //)
       end
     end
 
@@ -81,7 +87,7 @@ module ShipEngine
         case method
         when :get, :delete
           request.url(path, options)
-        when :post, :put
+        when :post, :put, :patch
           request.path = path
           request.body = options unless options.empty?
         end
