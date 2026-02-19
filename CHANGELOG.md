@@ -2,16 +2,21 @@
 
 ## 0.1.0 - Initial Release
 
-First release of `shipengine_rb`, an independent Ruby SDK for the ShipEngine API.
+A comprehensive Ruby SDK for the ShipEngine API with full parcel and LTL freight support.
 
 ### Highlights
 
-- **New gem identity**: `shipengine_rb` with `ShipEngineRb` namespace, fully independent from the official `shipengine` gem
-- **Resource-based API**: Access domains via `client.labels.create(...)`, `client.tracking.track(...)`, etc. instead of flat method delegations
-- **All raw hash responses**: Every method returns parsed JSON hashes for maximum flexibility -- no typed response models
+- **Resource-based API**: Access domains via `client.labels.create(...)`, `client.tracking.track(...)`, etc.
+- **Raw hash responses**: Every method returns parsed JSON hashes (symbol keys) for maximum flexibility
 - **LTL freight support**: Full coverage of ShipEngine's LTL API (`/v-beta/ltl/`) including carriers, quotes, pickups, and tracking
-- **Modern Ruby**: Requires Ruby >= 3.4
-- **Faraday 2.x**: Built on Faraday 2.x with `faraday-retry` for automatic 429 rate-limit handling
+- **Modern Ruby**: Built for Ruby >= 3.4
+- **Faraday 2.x + http.rb**: Fast HTTP stack with persistent connections, automatic 429 rate-limit retries, and `Retry-After` header support
+- **Pagination helpers**: Built-in `list_all` (lazy enumerator) and `list_each` for auto-paginated iteration
+- **Thread-safe configuration**: Immutable, frozen config objects with per-request override support
+- **Idempotency**: `Idempotency-Key` header support on any request
+- **Configurable logging**: Optional request/response logger
+- **99% test coverage**: 255 tests, 652 assertions, 98.88% line coverage, 88.24% branch coverage
+- **Comprehensive documentation**: YARD annotations on all public APIs + 22 detailed markdown guides with code samples and JSON response examples
 
 ### API Coverage
 
