@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shipengine_rb (0.1.0)
+    shipengine_rb (1.0.0)
       faraday (~> 2.0)
       faraday-http (~> 2.0)
       faraday-retry (~> 2.0)
