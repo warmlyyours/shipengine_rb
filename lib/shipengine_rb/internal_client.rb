@@ -61,7 +61,7 @@ module ShipEngineRb
                        max: config.retries,
                        retry_statuses: [429],
                        methods: IDEMPOTENT_METHODS + [:post],
-                       exceptions: [ShipEngineRb::Exceptions::RateLimitError],
+                       exceptions: [ShipEngineRb::Exceptions::RateLimitError, Faraday::TimeoutError, Faraday::ConnectionFailed],
                        retry_block: proc { |env:, **_kwargs|
                          env.request_headers['Retries'] = config.retries.to_s
                        }
@@ -98,6 +98,16 @@ module ShipEngineRb
       end
 
       response.body
+    rescue Faraday::TimeoutError
+      raise ShipEngineRb::Exceptions::TimeoutError.new(
+        message: "Read timed out after #{@configuration.timeout / 1000.0} seconds"
+      )
+    rescue Faraday::ConnectionFailed => e
+      raise ShipEngineRb::Exceptions::SystemError.new(
+        message: "Connection failed: #{e.message}",
+        code: ShipEngineRb::Exceptions::ErrorCode.get(:UNSPECIFIED),
+        request_id: nil
+      )
     end
   end
 end
