@@ -27,7 +27,7 @@ module ShipEngineRb
   #
   # @see https://shipengine.github.io/shipengine-openapi/
   class Client
-    attr_reader :configuration,
+    attr_reader :configuration, :internal_client,
                 :account, :addresses, :batches, :carrier_accounts, :carriers,
                 :documents, :downloads, :insurance, :labels, :ltl,
                 :manifests, :package_pickups, :package_types, :rates,
@@ -41,8 +41,12 @@ module ShipEngineRb
     # @param page_size [Integer, nil] Default page size for paginated endpoints (optional, default 50).
     # @param base_url [String, nil] Base URL for the API (optional, defaults to ShipEngine production).
     # @param logger [Logger, nil] Optional logger for request/response logging (default nil = off).
+    # @param rates_timeout [Integer, nil] Timeout in milliseconds used only for rate lookups (optional).
+    #   When set, the rates domain uses a dedicated connection with this timeout while all other
+    #   domains use the default +timeout+. Useful for failing fast on rate estimates without
+    #   affecting label generation or tracking calls.
     # @return [Client] A configured client instance with access to all domain resources.
-    def initialize(api_key, retries: nil, timeout: nil, open_timeout: nil, page_size: nil, base_url: nil, logger: nil)
+    def initialize(api_key, retries: nil, timeout: nil, open_timeout: nil, page_size: nil, base_url: nil, logger: nil, rates_timeout: nil)
       @configuration = Configuration.new(
         api_key:,
         retries:,
@@ -53,7 +57,9 @@ module ShipEngineRb
         logger:
       )
 
-      ic = InternalClient.new(@configuration)
+      @internal_client = InternalClient.new(@configuration)
+      ic = @internal_client
+      rates_ic = rates_timeout ? InternalClient.new(@configuration.merge(timeout: rates_timeout)) : ic
 
       @account          = Domain::Account.new(ic)
       @addresses        = Domain::Addresses.new(ic)
@@ -68,7 +74,7 @@ module ShipEngineRb
       @manifests        = Domain::Manifests.new(ic)
       @package_pickups  = Domain::PackagePickups.new(ic)
       @package_types    = Domain::PackageTypes.new(ic)
-      @rates            = Domain::Rates.new(ic)
+      @rates            = Domain::Rates.new(rates_ic)
       @service_points   = Domain::ServicePoints.new(ic)
       @shipments        = Domain::Shipments.new(ic)
       @tags             = Domain::Tags.new(ic)

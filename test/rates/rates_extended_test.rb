@@ -42,6 +42,30 @@ describe 'Rates Extended Operations' do
     assert_requested(stub, times: 1)
   end
 
+  it 'uses a dedicated connection for rates when rates_timeout is set' do
+    client_with_rates_timeout = ShipEngineRb::Client.new(
+      'TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s',
+      timeout: 60_000,
+      rates_timeout: 10_000
+    )
+
+    assert_equal 10_000, client_with_rates_timeout.rates.instance_variable_get(:@internal_client).configuration.timeout
+    assert_equal 60_000, client_with_rates_timeout.labels.instance_variable_get(:@internal_client).configuration.timeout
+  end
+
+  it 'shares the same connection for rates when rates_timeout is not set' do
+    client_no_rates_timeout = ShipEngineRb::Client.new(
+      'TEST_ycvJAgX6tLB1Awm9WGJmD8mpZ8wXiQ20WhqFowCk32s',
+      timeout: 60_000
+    )
+
+    assert_equal 60_000, client_no_rates_timeout.rates.instance_variable_get(:@internal_client).configuration.timeout
+    assert_same(
+      client_no_rates_timeout.rates.instance_variable_get(:@internal_client),
+      client_no_rates_timeout.labels.instance_variable_get(:@internal_client)
+    )
+  end
+
   it 'gets bulk rates' do
     params = { shipment_ids: ['se-ship-1', 'se-ship-2'], rate_options: {} }
 
