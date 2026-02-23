@@ -4,7 +4,7 @@ module ShipEngineRb
   module Domain
     # LTL Freight domain for Less-Than-Truckload shipping.
     # API base path: /v-beta/ltl/
-    # Supports carriers, quotes, pickups, and tracking for LTL freight shipments.
+    # Supports carriers, spot quotes, pickups, and tracking for LTL freight shipments.
     class Ltl
       LTL_BASE = '/v-beta/ltl'
 
@@ -100,6 +100,33 @@ module ShipEngineRb
       #   client.ltl.cancel_pickup("se_pickup_123")
       def cancel_pickup(pickup_id, config: {})
         @internal_client.delete("#{LTL_BASE}/pickups/#{pickup_id}", {}, config)
+      end
+
+      # Request an LTL spot quote from a specific carrier.
+      # Spot quotes are discounted rates based on excess carrier capacity.
+      # The returned quote_id must be supplied when booking a pickup.
+      #
+      # @param carrier_id [String] the ShipEngine LTL carrier account ID
+      # @param params [Hash] quote request body (shipment, shipment_measurements)
+      # @param config [Hash] optional request configuration (e.g., idempotency_key)
+      # @return [Hash] list of quotes with charges, service info, and expiration
+      # @example
+      #   result = client.ltl.request_carrier_quote("se-123", { shipment: {...}, shipment_measurements: {...} })
+      def request_carrier_quote(carrier_id, params, config: {})
+        @internal_client.post("#{LTL_BASE}/spot-quotes/#{carrier_id}", params, config)
+      end
+
+      # Book a pickup for an existing LTL quote.
+      # Creates a bill of lading and schedules the freight pickup with the carrier.
+      #
+      # @param quote_id [String] the quote ID returned by request_carrier_quote or get_quote
+      # @param params [Hash] pickup details (pickup_date, pickup_window, delivery_date, etc.)
+      # @param config [Hash] optional request configuration (e.g., idempotency_key)
+      # @return [Hash] confirmation_number, bill of lading document, pickup_id, pro_number
+      # @example
+      #   result = client.ltl.book_pickup("q-abc123", { pickup_date: "2026-03-01", pickup_window: {...} })
+      def book_pickup(quote_id, params, config: {})
+        @internal_client.post("#{LTL_BASE}/quotes/#{quote_id}/pickup", params, config)
       end
 
       # Track an LTL shipment.

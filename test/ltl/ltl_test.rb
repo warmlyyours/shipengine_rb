@@ -88,4 +88,47 @@ describe 'LTL Freight' do
     assert_equal 'LTL123', response[:tracking_number]
     assert_requested(stub, times: 1)
   end
+
+  it 'requests a carrier spot quote' do
+    params = {
+      shipment: { pickup_date: '2026-03-01', packages: [] },
+      shipment_measurements: { total_linear_length: { value: 48, unit: 'inches' } }
+    }
+    body = {
+      quotes: [{
+        quote_id: 'q-spot-1',
+        charges: [{ amount: { currency: 'USD', value: '250.00' }, type: 'total' }]
+      }]
+    }
+    stub = stub_request(:post, 'https://api.shipengine.com/v-beta/ltl/spot-quotes/ltl-1')
+           .with(body: params.to_json)
+           .to_return(status: 200, body: body.to_json)
+    response = client.ltl.request_carrier_quote('ltl-1', params)
+    assert_equal 1, response[:quotes].length
+    assert_equal 'q-spot-1', response[:quotes].first[:quote_id]
+    assert_requested(stub, times: 1)
+  end
+
+  it 'books a pickup for an LTL quote' do
+    params = {
+      pickup_date: '2026-03-01',
+      pickup_window: { start_at: '08:00:00', end_at: '17:00:00', closing_at: '17:00:00' },
+      delivery_date: '2026-03-03'
+    }
+    body = {
+      confirmation_number: '55667788',
+      pickup_id: 'p-spot-1',
+      pro_number: '1234578',
+      quote_id: 'q-spot-1',
+      documents: [{ type: 'bill_of_lading', format: 'pdf', image: 'base64data' }]
+    }
+    stub = stub_request(:post, 'https://api.shipengine.com/v-beta/ltl/quotes/q-spot-1/pickup')
+           .with(body: params.to_json)
+           .to_return(status: 200, body: body.to_json)
+    response = client.ltl.book_pickup('q-spot-1', params)
+    assert_equal 'p-spot-1', response[:pickup_id]
+    assert_equal '55667788', response[:confirmation_number]
+    assert_equal 1, response[:documents].length
+    assert_requested(stub, times: 1)
+  end
 end
