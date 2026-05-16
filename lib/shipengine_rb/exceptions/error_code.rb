@@ -9,10 +9,28 @@ module ShipEngineRb
         @codes[key]
       end
 
-      # @param [String] str_key
-      # @return [Symbol] error code
+      # Resolves a string error code coming back from ShipEngine into
+      # the canonical enum value when known, OR returns the original
+      # string when the gem's enum doesn't include it.
+      #
+      # The fallback exists because ShipEngine introduces new error
+      # codes faster than this gem ships them — without the fallback,
+      # every unknown code was silently nil-ed out, which made
+      # `ShipEngineError#code` useless for triage and for client-side
+      # retry/branch logic. Real-world bite: LTL label-purchase
+      # rejections returned `e.code == nil` because their codes weren't
+      # in the enum, leaving callers with no signal beyond `e.message`.
+      #
+      # Known codes still resolve to the canonical string from the
+      # `@codes` hash (so callers comparing against a constant don't
+      # change behavior); unknown codes pass through untouched.
+      #
+      # @param [String] str_key the raw `error_code` string from a
+      #   ShipEngine response.
+      # @return [String] the canonical enum value if known, otherwise
+      #   `str_key` verbatim. Never returns nil for a non-nil input.
       def self.get_by_str(str_key)
-        get(str_key.upcase.to_sym)
+        get(str_key.upcase.to_sym) || str_key
       end
 
       @codes = {
