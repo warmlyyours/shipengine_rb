@@ -40,6 +40,18 @@ describe 'Exceptions' do
       )
       assert_equal EC.get(:INVALID_FIELD_VALUE), err.code
     end
+
+    it 'preserves unknown string error codes instead of nil-swallowing them' do
+      # Regression for the bug where ShipEngine returns an error_code
+      # value the gem's hardcoded enum doesn't include — historically
+      # this nilled out `err.code`, leaving callers no way to branch on
+      # the failure. After the fix, unknown codes pass through verbatim.
+      err = E::ShipEngineError.new(
+        message: 'test', source: 'shipengine', type: 'validation',
+        code: 'some_brand_new_code_we_have_not_added', request_id: nil
+      )
+      assert_equal 'some_brand_new_code_we_have_not_added', err.code
+    end
   end
 
   describe 'ValidationError' do
@@ -235,6 +247,15 @@ describe 'Exceptions' do
 
     it '.get returns nil for unknown key' do
       assert_nil EC.get(:NONEXISTENT)
+    end
+
+    it '.get_by_str returns the original string for unknown codes (never nil for non-nil input)' do
+      assert_equal 'totally_new_code_from_shipengine', EC.get_by_str('totally_new_code_from_shipengine')
+    end
+
+    it '.get_by_str is case-insensitive on known codes (existing contract)' do
+      assert_equal 'rate_limit_exceeded', EC.get_by_str('RATE_LIMIT_EXCEEDED')
+      assert_equal 'rate_limit_exceeded', EC.get_by_str('Rate_Limit_Exceeded')
     end
   end
 
