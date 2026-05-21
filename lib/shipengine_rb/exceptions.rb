@@ -10,6 +10,15 @@ module ShipEngineRb
     class ShipEngineError < StandardError
       attr_reader :request_id, :source, :type, :code, :url
 
+      # Populated by Middleware::RaiseHttpException after construction so
+      # consumers can inspect the raw HTTP transaction that triggered the
+      # error. `response_body` is the parsed JSON body (a Hash, since the
+      # `:json` response middleware runs before us); `response_status` is
+      # the integer HTTP status; `request_url` is the full request URL.
+      # All default to nil for exceptions raised outside the middleware
+      # path (validation helpers, invariant errors).
+      attr_accessor :response_body, :response_status, :request_url
+
       def initialize(message:, source:, type:, code:, request_id:, url: nil)
         code = Exceptions::ErrorCode.get_by_str(code) if code.is_a?(String)
         super(message)

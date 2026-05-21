@@ -13,22 +13,26 @@ module ShipEngineRb
           parsed = parse_body(env[:body])
           error = extract_first_error(parsed)
 
-          raise Exceptions.create_error_instance(
+          err = Exceptions.create_error_instance(
             type: error[:error_type],
             message: error[:message] || "HTTP #{status}",
             code: error[:error_code],
             request_id: parsed.is_a?(Hash) ? (parsed[:request_id] || parsed['request_id']) : nil,
             source: error[:error_source]
           )
+          attach_http_context(err, env, parsed)
+          raise err
         when 429
           parsed = parse_body(env[:body])
           error = extract_first_error(parsed)
 
-          raise Exceptions::RateLimitError.new(
+          err = Exceptions::RateLimitError.new(
             retries: env.request_headers['Retries'].to_i,
             source: error[:error_source],
             request_id: parsed.is_a?(Hash) ? (parsed[:request_id] || parsed['request_id']) : nil
           )
+          attach_http_context(err, env, parsed)
+          raise err
         end
       end
 
@@ -54,6 +58,15 @@ module ShipEngineRb
           error_code: err[:error_code] || err['error_code'],
           error_source: err[:error_source] || err['error_source']
         }
+      end
+
+      # Stamp the raised exception with the parsed body, HTTP status, and
+      # request URL so consumers (loggers, error reporters) can dump the
+      # full HTTP context instead of just the structured fields.
+      def attach_http_context(err, env, parsed)
+        err.response_body = parsed
+        err.response_status = env[:status].to_i
+        err.request_url = env[:url].to_s if env[:url]
       end
     end
   end

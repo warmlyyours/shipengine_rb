@@ -167,4 +167,73 @@ describe 'Middleware::RaiseHttpException' do
       assert_equal 'Batch is locked', err.message
     end
   end
+
+  describe 'HTTP context attachment' do
+    it 'attaches response_body, response_status, and request_url to typed errors' do
+      stub_request(:get, 'https://api.shipengine.com/v1/labels/bad-id')
+        .to_return(status: 400, body: {
+          request_id: 'req_ctx',
+          errors: [{
+            error_source: 'shipengine',
+            error_type: 'validation',
+            error_code: 'invalid_field_value',
+            message: 'Invalid label ID',
+            field_name: 'label_id'
+          }]
+        }.to_json)
+
+      err = assert_raises(ShipEngineRb::Exceptions::ValidationError) do
+        client.labels.get_by_id('bad-id')
+      end
+
+      assert_equal 400, err.response_status
+      assert_equal 'https://api.shipengine.com/v1/labels/bad-id', err.request_url
+      assert_kind_of Hash, err.response_body
+      assert_equal 'req_ctx', err.response_body[:request_id]
+      assert_equal 'label_id', err.response_body.dig(:errors, 0, :field_name),
+                   'Full body retained so callers can read fields beyond the structured ones we extract'
+    end
+
+    it 'attaches response_body to fallback ShipEngineError for empty body responses' do
+      stub_request(:get, 'https://api.shipengine.com/v1/labels')
+        .to_return(status: 500, body: '')
+
+      err = assert_raises(ShipEngineRb::Exceptions::ShipEngineError) do
+        client.labels.list
+      end
+
+      assert_equal 500, err.response_status
+      assert_equal 'https://api.shipengine.com/v1/labels', err.request_url
+      assert_nil err.response_body
+    end
+
+    it 'attaches HTTP context to RateLimitError' do
+      stub_request(:get, 'https://api.shipengine.com/v1/labels')
+        .to_return(status: 429, body: {
+          request_id: 'req_rl',
+          errors: [{
+            error_source: 'shipengine',
+            error_type: 'system',
+            error_code: 'rate_limit_exceeded',
+            message: 'rate limited'
+          }]
+        }.to_json)
+
+      err = assert_raises(ShipEngineRb::Exceptions::RateLimitError) do
+        client.labels.list
+      end
+
+      assert_equal 429, err.response_status
+      assert_equal 'https://api.shipengine.com/v1/labels', err.request_url
+      assert_equal 'req_rl', err.response_body[:request_id]
+    end
+
+    it 'leaves HTTP context nil on validation errors raised outside the middleware' do
+      err = ShipEngineRb::Exceptions.create_invalid_field_value_error('bad field')
+
+      assert_nil err.response_status
+      assert_nil err.response_body
+      assert_nil err.request_url
+    end
+  end
 end
