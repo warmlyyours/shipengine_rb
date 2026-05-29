@@ -39,6 +39,13 @@ module ShipEngineRb
 
       # Starts real-time tracking updates (webhooks) for a package.
       #
+      # ShipEngine's POST /v1/tracking/start endpoint reads carrier_code
+      # and tracking_number from the query string, NOT the request body
+      # (verified against the live API 2026-05-28 — sending in the body
+      # 100%-returns `BusinessRulesError: Invalid tracking_number.`
+      # regardless of input validity). Pass them via the InternalClient
+      # `:query` config so they're appended to the URL.
+      #
       # @param carrier_code [String] Carrier code (e.g. "ups", "fedex", "usps").
       # @param tracking_number [String] The carrier's tracking number.
       # @param config [Hash] Optional request configuration (e.g. idempotency_key).
@@ -47,10 +54,14 @@ module ShipEngineRb
       #   client.tracking.start("ups", "1Z999AA10123456784")
       # @see https://shipengine.github.io/shipengine-openapi/
       def start(carrier_code, tracking_number, config: {})
-        @internal_client.post('/v1/tracking/start', { carrier_code:, tracking_number: }, config)
+        merged_config = config.merge(query: { carrier_code:, tracking_number: })
+        @internal_client.post('/v1/tracking/start', {}, merged_config)
       end
 
       # Stops real-time tracking updates (webhooks) for a package.
+      #
+      # Same query-string requirement as {#start} (sibling endpoint with
+      # identical request shape on the SE side).
       #
       # @param carrier_code [String] Carrier code (e.g. "ups", "fedex", "usps").
       # @param tracking_number [String] The carrier's tracking number.
@@ -60,7 +71,8 @@ module ShipEngineRb
       #   client.tracking.stop("ups", "1Z999AA10123456784")
       # @see https://shipengine.github.io/shipengine-openapi/
       def stop(carrier_code, tracking_number, config: {})
-        @internal_client.post('/v1/tracking/stop', { carrier_code:, tracking_number: }, config)
+        merged_config = config.merge(query: { carrier_code:, tracking_number: })
+        @internal_client.post('/v1/tracking/stop', {}, merged_config)
       end
     end
   end

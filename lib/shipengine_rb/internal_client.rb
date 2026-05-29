@@ -41,7 +41,15 @@ module ShipEngineRb
     private
 
     IDEMPOTENT_METHODS = %i[delete get head options put].freeze
-    REQUEST_KEYS = %i[idempotency_key].freeze
+    # Config keys interpreted by `#request` itself, not forwarded as
+    # Configuration overrides to `build_connection`.
+    #   :idempotency_key — sent as the `Idempotency-Key` header.
+    #   :query           — Hash of query-string parameters appended to
+    #                      the URL on `:post`, `:put`, `:patch` requests.
+    #                      Needed for endpoints whose params live in the
+    #                      query string even though the verb is POST
+    #                      (ShipEngine /v1/tracking/start, /stop).
+    REQUEST_KEYS = %i[idempotency_key query].freeze
     private_constant :IDEMPOTENT_METHODS, :REQUEST_KEYS
 
     def build_connection(config)
@@ -77,6 +85,7 @@ module ShipEngineRb
 
     def request(method, path, params, config)
       idempotency_key = config[:idempotency_key] if config.is_a?(Hash)
+      query           = config[:query]           if config.is_a?(Hash)
       config_overrides = config.is_a?(Hash) ? config.except(*REQUEST_KEYS) : config
 
       conn = if config_overrides.nil? || config_overrides.empty?
@@ -93,6 +102,11 @@ module ShipEngineRb
           req.url(path, params)
         when :post, :put, :patch
           req.path = path
+          # Faraday's `req.params=` builds a proper URL-encoded query
+          # string from the hash. Required for endpoints like
+          # /v1/tracking/start that accept POST but read params from
+          # the query string, not the body.
+          req.params = query if query
           req.body = params unless params.empty?
         end
       end
