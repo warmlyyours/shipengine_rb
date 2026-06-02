@@ -35,28 +35,6 @@ module ShipEngineRb
         @internal_client.post("#{LTL_BASE}/quotes/#{carrier_id}", params, config)
       end
 
-      # List LTL quotes.
-      #
-      # @param params [Hash] query params for filtering and pagination
-      # @param config [Hash] optional request configuration (e.g., idempotency_key)
-      # @return [Hash] paginated list of LTL quotes
-      # @example
-      #   quotes = client.ltl.list_quotes(page: 1, page_size: 25)
-      def list_quotes(params = {}, config: {})
-        @internal_client.get("#{LTL_BASE}/quotes", params, config)
-      end
-
-      # Get a specific LTL quote by ID.
-      #
-      # @param quote_id [String] the unique identifier of the LTL quote
-      # @param config [Hash] optional request configuration (e.g., idempotency_key)
-      # @return [Hash] quote details including rate, carrier, and shipment info
-      # @example
-      #   quote = client.ltl.get_quote_by_id("se_quote_123")
-      def get_quote_by_id(quote_id, config: {})
-        @internal_client.get("#{LTL_BASE}/quotes/#{quote_id}", {}, config)
-      end
-
       # Schedule an LTL freight pickup.
       #
       # @param params [Hash] pickup scheduling details (carrier_id, pickup_window, etc.)
@@ -66,17 +44,6 @@ module ShipEngineRb
       #   pickup = client.ltl.schedule_pickup({ carrier_id: "se_123", pickup_window: {...} })
       def schedule_pickup(params, config: {})
         @internal_client.post("#{LTL_BASE}/pickups", params, config)
-      end
-
-      # Get an LTL pickup by ID.
-      #
-      # @param pickup_id [String] the unique identifier of the pickup
-      # @param config [Hash] optional request configuration (e.g., idempotency_key)
-      # @return [Hash] pickup details including status, window, and carrier info
-      # @example
-      #   pickup = client.ltl.get_pickup("se_pickup_123")
-      def get_pickup(pickup_id, config: {})
-        @internal_client.get("#{LTL_BASE}/pickups/#{pickup_id}", {}, config)
       end
 
       # Update an LTL pickup.

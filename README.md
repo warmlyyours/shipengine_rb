@@ -150,10 +150,7 @@ client.shipments.update_tags(params)
 ```ruby
 client.ltl.list_carriers
 client.ltl.get_quote(carrier_id, params)
-client.ltl.list_quotes
-client.ltl.get_quote_by_id(quote_id)
 client.ltl.schedule_pickup(params)
-client.ltl.get_pickup(pickup_id)
 client.ltl.update_pickup(pickup_id, params)
 client.ltl.cancel_pickup(pickup_id)
 client.ltl.track(tracking_number: 'LTL123')

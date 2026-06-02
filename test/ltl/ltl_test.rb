@@ -30,36 +30,12 @@ describe 'LTL Freight' do
     assert_requested(stub, times: 1)
   end
 
-  it 'lists LTL quotes' do
-    stub = stub_request(:get, 'https://api.shipengine.com/v-beta/ltl/quotes')
-           .to_return(status: 200, body: { quotes: [] }.to_json)
-    response = client.ltl.list_quotes
-    assert_equal [], response[:quotes]
-    assert_requested(stub, times: 1)
-  end
-
-  it 'gets an LTL quote by ID' do
-    stub = stub_request(:get, 'https://api.shipengine.com/v-beta/ltl/quotes/q-1')
-           .to_return(status: 200, body: { quote_id: 'q-1' }.to_json)
-    response = client.ltl.get_quote_by_id('q-1')
-    assert_equal 'q-1', response[:quote_id]
-    assert_requested(stub, times: 1)
-  end
-
   it 'schedules an LTL pickup' do
     params = { quote_id: 'q-1', pickup_date: '2026-02-20' }
     stub = stub_request(:post, 'https://api.shipengine.com/v-beta/ltl/pickups')
            .with(body: params.to_json)
            .to_return(status: 200, body: { pickup_id: 'p-1' }.to_json)
     response = client.ltl.schedule_pickup(params)
-    assert_equal 'p-1', response[:pickup_id]
-    assert_requested(stub, times: 1)
-  end
-
-  it 'gets an LTL pickup' do
-    stub = stub_request(:get, 'https://api.shipengine.com/v-beta/ltl/pickups/p-1')
-           .to_return(status: 200, body: { pickup_id: 'p-1' }.to_json)
-    response = client.ltl.get_pickup('p-1')
     assert_equal 'p-1', response[:pickup_id]
     assert_requested(stub, times: 1)
   end

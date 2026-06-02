@@ -85,70 +85,6 @@ response = client.ltl.get_quote('ltl-1', params)
 
 ---
 
-## list_quotes
-
-List LTL quotes with optional filtering and pagination.
-
-**Method:** `client.ltl.list_quotes(params = {}, config: {})`
-
-**API Endpoint:** `GET /v-beta/ltl/quotes`
-
-### Parameters
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| params | Hash | No | Query params for filtering and pagination (e.g. page, page_size) |
-| config | Hash | No | Per-request config overrides |
-
-### Example
-
-```ruby
-response = client.ltl.list_quotes
-# or with pagination:
-response = client.ltl.list_quotes(page: 1, page_size: 25)
-```
-
-### Response
-
-```json
-{
-  "quotes": []
-}
-```
-
----
-
-## get_quote_by_id
-
-Get a specific LTL quote by ID. Returns quote details including rate, carrier, and shipment info.
-
-**Method:** `client.ltl.get_quote_by_id(quote_id, config: {})`
-
-**API Endpoint:** `GET /v-beta/ltl/quotes/:quote_id`
-
-### Parameters
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| quote_id | String | Yes | The unique identifier of the LTL quote |
-| config | Hash | No | Per-request config overrides |
-
-### Example
-
-```ruby
-response = client.ltl.get_quote_by_id('q-1')
-```
-
-### Response
-
-```json
-{
-  "quote_id": "q-1"
-}
-```
-
----
-
 ## schedule_pickup
 
 Schedule an LTL freight pickup. Provide quote ID and desired pickup date.
@@ -179,37 +115,6 @@ params = {
   pickup_date: '2026-02-20'
 }
 response = client.ltl.schedule_pickup(params)
-```
-
-### Response
-
-```json
-{
-  "pickup_id": "p-1"
-}
-```
-
----
-
-## get_pickup
-
-Get an LTL pickup by ID. Returns pickup details including status, window, and carrier info.
-
-**Method:** `client.ltl.get_pickup(pickup_id, config: {})`
-
-**API Endpoint:** `GET /v-beta/ltl/pickups/:pickup_id`
-
-### Parameters
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| pickup_id | String | Yes | The unique identifier of the pickup |
-| config | Hash | No | Per-request config overrides |
-
-### Example
-
-```ruby
-response = client.ltl.get_pickup('p-1')
 ```
 
 ### Response
