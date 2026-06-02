@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.0](https://github.com/warmlyyours/shipengine_rb/compare/v0.1.0...v0.2.0) (2026-06-02)
+
+
+### Features
+
+* **exceptions:** surface raw HTTP body/status/url on ShipEngineError ([cc49393](https://github.com/warmlyyours/shipengine_rb/commit/cc493938bfd02da911f3d368cda354c056695201))
+
+
+### Bug Fixes
+
+* ErrorCode.get_by_str returns original string for unknown codes ([0ecf693](https://github.com/warmlyyours/shipengine_rb/commit/0ecf69363d83ad5a9ac85ccc8d031afedf3367da))
+* **ltl:** remove three undocumented GET methods that return 405 ([02e83b5](https://github.com/warmlyyours/shipengine_rb/commit/02e83b5e31ada0f3c59a3194745fbcdbe85723ee))
+* **tracking:** POST /v1/tracking/{start,stop} requires params in the query string ([35968a7](https://github.com/warmlyyours/shipengine_rb/commit/35968a736afbfabee1d02af9e34901d1af23749c))
+
 ## 0.1.0 - Initial Release
 
 A comprehensive Ruby SDK for the ShipEngine API with full parcel and LTL freight support.
